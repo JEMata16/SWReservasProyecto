@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+
+  // Do not use foreign keys (PlanetScale does not support them)
+  relationMode = "prisma"
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Hotel {
+  id          String        @id @default(uuid())
+  name        String        @unique
+  rooms       Json
+  description String        @db.VarChar(255)
+  location    Locations     @relation(fields: [locationsId], references: [id])
+  Rervation   Reservation[]
+  locationsId Int
+  images      Json
+}
+
+model Tours {
+  id          String        @id @default(uuid())
+  name        String
+  description String        @db.VarChar(255)
+  startsAt    String?
+  endsAt      String?
+  location    Locations     @relation(fields: [locationId], references: [id])
+  locationId  Int
+  Reservation Reservation[]
+  images      Json
+}
+
+model Locations {
+  id    Int     @id @default(autoincrement())
+  name  String
+  Hotel Hotel[]
+  Tours Tours[]
+}
+
+model Reservation {
+  id       String   @id @default(uuid())
+  hotel    Hotel?    @relation(fields: [hotelId], references: [id])
+  hotelId  String?
+  tour     Tours?    @relation(fields: [tourId], references: [id])
+  tourId   String?
+  userId   String
+  phone    String
+  dateFrom DateTime @default(now())
+}
+
+enum Role {
+  CLIENT
+  ADMIN
+  EMPLOYEE
+}
