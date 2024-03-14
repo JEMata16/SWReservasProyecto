@@ -16,9 +16,27 @@ interface UserDetails {
 }
 
 
-const MyTable: React.FC<{ data: { id: string; userId: string; phone: string; hotel: { name: string } }[] }> = ({ data }) => {
+type ReservationData = {
+    id: string;
+    phone: string;
+    dateFrom: Date;
+    hotel: {
+        id: string;
+        name: string;
+    };
+    userId: string;
+};
+
+/**
+ * Renders a table with tour reservations.
+ *
+ * @param {Array<ReservationData>} data - The data for the table.
+ * @return {JSX.Element} The rendered table.
+ */
+const MyTable: React.FC<{data: Array<ReservationData>;}> = ({ data } : { data: Array<ReservationData>; }): JSX.Element => {
     const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
     const query = api.reservation.deleteReservation.useMutation();
+
     useEffect(() => {
         const fetchUserDetails = async (userId: string) => {
             try {
@@ -35,7 +53,6 @@ const MyTable: React.FC<{ data: { id: string; userId: string; phone: string; hot
             }
         };
 
-        // Assuming data is an array of users and each user has a userId
         data.forEach((row) => {
             fetchUserDetails(row.userId);
         });
@@ -43,9 +60,9 @@ const MyTable: React.FC<{ data: { id: string; userId: string; phone: string; hot
 
     const handleDelete = async (reservationId: string) => {
         try {
-            await query.mutateAsync({reservationId: reservationId});
+            await query.mutateAsync({ reservationId });
         } catch (error) {
-            alert("No se borro")
+            alert("Couldn't delete");
         }
     };
 
@@ -60,8 +77,7 @@ const MyTable: React.FC<{ data: { id: string; userId: string; phone: string; hot
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data.length === 0?
-                     (
+                    {data.length === 0 ? (
                         <TableRow>
                             <TableCell colSpan={3}>
                                 <Typography variant="subtitle1" color="textSecondary">
@@ -70,36 +86,51 @@ const MyTable: React.FC<{ data: { id: string; userId: string; phone: string; hot
                             </TableCell>
                         </TableRow>
                     ) : (
-                    data.map((row, index) => (
-                        <TableRow key={index}>
-                            <TableCell>{userDetails ? `${userDetails.firstName} ${userDetails.lastName}` : "N/A"}</TableCell>
-                            <TableCell>{row.phone}</TableCell>
-                            <TableCell>{row.hotel.name}</TableCell>
-                            <ButtonBase onClick={() => handleDelete(row.id)}>
-                                <IconButton aria-label="delete">
-                                    <DeleteIcon />
-                                </IconButton>
-                            </ButtonBase>
-                        </TableRow>
-                    )))}
+                        data.map((row, index) => (
+                            <TableRow key={index}>
+                                <TableCell>
+                                    {userDetails ? `${userDetails.firstName} ${userDetails.lastName}` : "N/A"}
+                                </TableCell>
+                                <TableCell>{row.phone}</TableCell>
+                                <TableCell>{row.hotel.name}</TableCell>
+                                <ButtonBase onClick={() => handleDelete(row.id)}>
+                                    <IconButton aria-label="delete">
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </ButtonBase>
+                            </TableRow>
+                        ))
+                    )}
                 </TableBody>
             </Table>
         </Paper>
     );
 };
 
-function usuariosInteresados() {
-    const { data: tableData, error } = api.reservation.getAllReservations.useQuery();
+/**
+ * Render a component that displays a table of user-interested users, with their phone numbers and hotel names.
+ * @returns JSX.Element
+ */
+function usuariosInteresados(): JSX.Element {
+    const { data: tableData, error } = api.reservation.getAllReservations.useQuery<ReservationData[]>();
     if (error) {
         // Handle error, show an error message, or redirect
-        return <div>Error loading data</div>;
+        return <div>Error loading data</div> as JSX.Element;
     }
 
     return (
         <SidebarLayout>
-            {tableData ? <MyTable data={tableData} /> : <div>Loading...</div>}
+            {tableData ? (
+                <MyTable data={tableData} />
+            ) : (
+                <div>Loading...</div>
+            )}
         </SidebarLayout>
-    );
+    ) as JSX.Element;
 }
+
+
+
+
 
 export default usuariosInteresados;

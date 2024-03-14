@@ -1,11 +1,18 @@
 import { Button } from "@mui/material";
+import { Hotel, Prisma } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 
 
-const Places = () => {
-  const { data, isLoading } = api.hotels.getAll.useQuery();
+
+/**
+ * Renders a list of hotel recommendations.
+ * 
+ * @returns {JSX.Element} The JSX element representing the list of hotel recommendations.
+ */
+const Places = (): JSX.Element => {
+  const { data, isLoading }: { data?: Hotel[], isLoading: boolean } = api.hotels.getAll.useQuery();
   if (isLoading) return <div className="text-4x1 font-bold">Loading...</div>
   const router = useRouter();
   return (
@@ -13,11 +20,12 @@ const Places = () => {
       <div className="my-10 text-center">
         <h1 className="text-4xl font-bold">Our Recommendation</h1>
         <section className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-cols-1 gap-10 my-10 justify-items-center items-center pb-10 border-b">
-          {data?.map((hotel) => (
+          {data?.map((hotel: Hotel) => (
             <div className="drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200">
+              
               <img
                 className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
-                src={hotel?.images?.img[0]}
+                src={hotel.images as Prisma.JsonObject && typeof hotel.images === 'object' ? (hotel.images?[0] as Prisma.JsonValue : '') as string  : ''}
                 alt=""
               />
               <div className="p-4 space-y-4">

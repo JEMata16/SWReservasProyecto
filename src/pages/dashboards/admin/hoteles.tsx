@@ -1,4 +1,5 @@
 import { Button } from "@mui/material";
+import { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import SidebarLayout from "~/layouts/SidebarLayout";
@@ -29,7 +30,7 @@ const hotelesAdmin = () => {
             <div className="drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200">
               <img
                 className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
-                src={hotel?.images?.img[0]}
+                src={hotel.images as Prisma.JsonObject && typeof hotel.images === 'object' ? (hotel.images?[0] as Prisma.JsonValue : '') as string  : ''}
                 alt=""
               />
               <div className="p-4 space-y-4">

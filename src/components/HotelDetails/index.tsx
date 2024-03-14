@@ -6,19 +6,26 @@ import 'react-international-phone/style.css';
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { Typography } from "@mui/material";
+import { Prisma } from "@prisma/client";
 
 interface HotelDetailsProps {
   hotelId: string;
 }
 interface CarouselProps {
-  images: string[];
+  images: Prisma.JsonObject | undefined;
 }
 interface ReservationProps {
   id: string;
 }
 
 
-const Modal = ({ isOpen, onClose, children }) => {
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+}
+
+const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   const modalClasses = isOpen ? 'fixed inset-0 flex items-center justify-center' : 'hidden';
 
   return (
@@ -98,29 +105,29 @@ const ReservationButton: React.FC<ReservationProps> = ({ id }) => {
 
 const Carousel: React.FC<CarouselProps> = ({ images }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-
+  const imagesItems = images && images['img'] ? images['img'] as Prisma.JsonArray : [];
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev === 0 ? imagesItems.length - 1 : prev - 1));
   };
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    setCurrentSlide((prev) => (prev === imagesItems.length - 1 ? 0 : prev + 1));
   };
-
+  
   return (
     <div className="carousel content-center w-full">
-      {images.map((imageUrl, index) => (
+      {imagesItems.map((imageUrl: Prisma.JsonValue, index: number) => (
         <div key={index} className={`carousel-item relative w-full ${index === currentSlide ? 'block' : 'hidden'}`}>
-          <img src={imageUrl} className="w-full" alt={`Slide ${index + 1}`} />
+          <img src={imageUrl as string} className="w-full" alt={`Slide ${index + 1}`} />
           <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-            <a href={`#slide${index === 0 ? images.length : index}`} className="btn btn-circle" onClick={prevSlide}>
+            <a href={`#slide${index === 0 ? imagesItems.length : index}`} className="btn btn-circle" onClick={prevSlide}>
               ❮
             </a>
-            <a href={`#slide${index === images.length - 1 ? 1 : index + 2}`} className="btn btn-circle" onClick={nextSlide}>
+            <a href={`#slide${index === imagesItems.length - 1 ? 1 : index + 2}`} className="btn btn-circle" onClick={nextSlide}>
               ❯
             </a>
           </div>
@@ -130,16 +137,19 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
   );
 };
 
+
 const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId }) => {
   const { data } = api.hotels.getById.useQuery({ text: hotelId })
   const hotel = {
     id: data?.id,
     name: data?.name,
     description: data?.description,
-    rooms: data?.rooms?.rooms,
-    images: data?.images?.img ?? [],
+    rooms: data?.rooms as Prisma.JsonObject,
+    images: data?.images as Prisma.JsonObject,
     location: api.hotels.getHotelLocalization.useQuery({ locationId: (data?.locationsId as number) }).data?.name,
   };
+
+  const roomsList = hotel.rooms && hotel.rooms['rooms'] ? hotel.rooms['rooms'] as Prisma.JsonArray : [];
   return (
     <>
       <Hero />
@@ -148,10 +158,12 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId }) => {
           <h2 className="text-3xl font-bold mb-4">{hotel?.name}</h2>
           <p className="text-gray-600">Province: {hotel?.location}</p>
 
+
           <h3 className="text-xl font-semibold mt-4">Rooms</h3>
           <ul className="list-disc pl-4">
-            {hotel.rooms?.map((room, index) => (
-              <li key={index} className="mb-2">{room?.type}</li>
+            
+            {roomsList.map((room: Prisma.JsonValue, index: number) => (
+              <li key={index} className="mb-2">{(room as { type: string })['type']}</li>
             ))}
           </ul>
 

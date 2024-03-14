@@ -77,7 +77,7 @@ function HeaderUserbox() {
   return (
     <>
       <UserBoxButton color="secondary" ref={ref} onClick={handleOpen}>
-        <Avatar variant="rounded" alt={user?.firstName} src={user?.imageUrl} />
+        <Avatar variant="rounded" alt={user?.firstName || "Fallback"} src={user?.imageUrl} />
         <Hidden mdDown>
           <UserBoxText>
             <UserBoxLabel variant="body1">{user?.fullName}</UserBoxLabel>
@@ -104,7 +104,7 @@ function HeaderUserbox() {
         }}
       >
         <MenuUserBox sx={{ minWidth: 210 }} display="flex">
-          <Avatar variant="rounded" alt={user?.firstName} src={user?.imageUrl} />
+          <Avatar variant="rounded" alt={user?.firstName || "Fallback"} src={user?.imageUrl} />
           <UserBoxText>
             <UserBoxLabel variant="body1">{user?.fullName}</UserBoxLabel>
             <UserBoxDescription variant="body2">

@@ -65,7 +65,7 @@ function Sidebar() {
                 width: 52
               }}
             >
-            <Link href={"/dashboards/admin/usuarios-interesados"}>
+            <Link href={"/"}>
               <Typography variant='h3'>MkConnection</Typography>
             </Link>
             </Box>

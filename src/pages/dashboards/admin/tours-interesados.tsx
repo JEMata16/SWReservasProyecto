@@ -7,6 +7,7 @@ import { createClerkClient } from "@clerk/nextjs/server";
 import { useEffect, useState } from "react";
 import { env } from "~/env";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Tours } from "@prisma/client";
 
 interface UserDetails {
     // Define the type of user details here
@@ -16,17 +17,40 @@ interface UserDetails {
 }
 
 
-const MyTable: React.FC<{ data: { id: string; userId: string; phone: string; tour: { name: string } }[] }> = ({ data }) => {
-    const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-    const query = api.reservation.deleteReservation.useMutation();
-    useEffect(() => {
-        const fetchUserDetails = async (userId: string) => {
-            try {
-                const response = await fetch(`/api/userById/${userId}`);
+type TourReservation = {
+    id: string;
+    userId: string;
+    phone: string;
+    dateFrom: Date;
+    dateTo: Date;
+    tour: {
+        id: string;
+        name: string;
+    };
+};
 
-                if (response.ok) {
-                    const data = await response.json();
-                    setUserDetails(data.user);
+type UserDetailsType = {
+    firstName: string;
+    lastName: string;
+};
+
+/**
+ * Renders a table with tour reservations.
+ *
+ * @param {Array<TourReservation>} data - The data for the table.
+ * @return {JSX.Element} The rendered table.
+ */
+const MyTable: React.FC<{data: Array<TourReservation>;}> = ({ data }: { data: Array<TourReservation> }): JSX.Element => {
+    const [userDetails, setUserDetails] = useState<UserDetailsType | null>(null);
+    const query = api.reservation.deleteReservation.useMutation();
+
+    useEffect(() => {
+        const fetchUserDetails = async (userId: string): Promise<void> => {
+            try {
+                const response = await axios.get<{ user: UserDetailsType }>(`/api/userById/${userId}`);
+
+                if (response.status === 200) {
+                    setUserDetails(response.data.user);
                 } else {
                     console.error('Failed to fetch user details:', response.status);
                 }
@@ -41,11 +65,11 @@ const MyTable: React.FC<{ data: { id: string; userId: string; phone: string; tou
         });
     }, [data]);
 
-    const handleDelete = async (reservationId: string) => {
+    const handleDelete = async (reservationId: string): Promise<void> => {
         try {
-            await query.mutateAsync({reservationId: reservationId});
+            await query.mutateAsync({ reservationId });
         } catch (error) {
-            alert("No se borro")
+            alert("No se borro");
         }
     };
 
@@ -60,8 +84,7 @@ const MyTable: React.FC<{ data: { id: string; userId: string; phone: string; tou
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data.length === 0?
-                     (
+                    {data.length === 0 ? (
                         <TableRow>
                             <TableCell colSpan={3}>
                                 <Typography variant="subtitle1" color="textSecondary">
@@ -70,26 +93,35 @@ const MyTable: React.FC<{ data: { id: string; userId: string; phone: string; tou
                             </TableCell>
                         </TableRow>
                     ) : (
-                    data.map((row, index) => (
-                        <TableRow key={index}>
-                            <TableCell>{userDetails ? `${userDetails.firstName} ${userDetails.lastName}` : "N/A"}</TableCell>
-                            <TableCell>{row.phone}</TableCell>
-                            <TableCell>{row.tour.name}</TableCell>
-                            <ButtonBase onClick={() => handleDelete(row.id)}>
-                                <IconButton aria-label="delete">
-                                    <DeleteIcon />
-                                </IconButton>
-                            </ButtonBase>
-                        </TableRow>
-                    )))}
+                        data.map((row, index) => (
+                            <TableRow key={index}>
+                                <TableCell>
+                                    {userDetails ? `${userDetails.firstName} ${userDetails.lastName}` : "N/A"}
+                                </TableCell>
+                                <TableCell>{row.phone}</TableCell>
+                                <TableCell>{row.tour.name}</TableCell>
+                                <ButtonBase onClick={() => handleDelete(row.id)}>
+                                    <IconButton aria-label="delete">
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </ButtonBase>
+                            </TableRow>
+                        ))
+                    )}
                 </TableBody>
             </Table>
         </Paper>
     );
 };
 
-function toursInteresados() {
-    const { data: tableData, error } = api.reservation.getAllToursReservations.useQuery();
+/**
+ * Renders the toursInteresados page.
+ * 
+ * @returns {JSX.Element} The toursInteresados page.
+ */
+function toursInteresados(): JSX.Element {
+    const { data: tableData, error } = api.reservation.getAllToursReservations.useQuery<TourReservation[]>();
+
     if (error) {
         // Handle error, show an error message, or redirect
         return <div>Error loading data</div>;
@@ -101,5 +133,7 @@ function toursInteresados() {
         </SidebarLayout>
     );
 }
+
+
 
 export default toursInteresados;

@@ -16,7 +16,7 @@ function PageHeader() {
             height: theme.spacing(8)
           }}
           variant="rounded"
-          alt={user?.firstName}
+          alt={user?.firstName || "FallBack"}
           src={user?.imageUrl}
         />
       </Grid>
