@@ -1,5 +1,4 @@
-import { Button } from "@mui/material";
-import { Hotel, Prisma } from "@prisma/client";
+import { Hotel } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
@@ -12,7 +11,7 @@ import { api } from "~/utils/api";
  * @returns {JSX.Element} The JSX element representing the list of hotel recommendations.
  */
 const Places = (): JSX.Element => {
-  const { data, isLoading }: { data?: Hotel[], isLoading: boolean } = api.hotels.getAll.useQuery();
+  const { data, isLoading }: { data?: Hotel[], isLoading: boolean } = api.hotels.getAll.useQuery({take: 5});
   if (isLoading) return <div className="text-4x1 font-bold">Loading...</div>
   const router = useRouter();
   return (
@@ -25,7 +24,7 @@ const Places = (): JSX.Element => {
               
               <img
                 className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
-                src={hotel.images as Prisma.JsonObject && typeof hotel.images === 'object' ? (hotel.images?[0] as Prisma.JsonValue : '') as string  : ''}
+                src={(hotel.images && typeof hotel.images === 'object' && 'img' in hotel.images && Array.isArray(hotel.images.img)) ? hotel.images.img[0] as string : ""}
                 alt=""
               />
               <div className="p-4 space-y-4">

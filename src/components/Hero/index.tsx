@@ -25,7 +25,7 @@ const Hero = () => {
                     <ul className="flex space-x-5 font-bold cursor-pointer text-gray-300">
                         <li className="hover:text-white">About</li>
                         <li className="hover:text-white">Discover</li>
-                        <li className="hover:text-white">Places</li>
+                        <li className="hover:text-white"><a href="/places">Places</a></li>
                         <li className="hover:text-white">Contact</li>
                         <li className="hover:text-white"><a href="/dashboards/admin/usuarios-interesados">Admin</a></li>
                         {isSignedIn ? (

@@ -6,11 +6,11 @@ import SidebarLayout from "~/layouts/SidebarLayout";
 import { api } from "~/utils/api";
 
 
-const hotelesAdmin = () => {
-  const { data, isLoading } = api.hotels.getAll.useQuery({});
-  const mutation = api.hotels.deleteById.useMutation();
+const toursAdmin = () => {
+  const { data, isLoading } = api.tours.getAll.useQuery();
+  const mutation = api.tours.deleteById.useMutation();
   if (isLoading) return <div className="text-4x1 font-bold">Loading...</div>
-  const deleteHotel = async (id: string) => {
+  const deleteTour = async (id: string) => {
     try {
       await mutation.mutateAsync({
         text: id
@@ -24,25 +24,25 @@ const hotelesAdmin = () => {
       <div className="w-4/5 m-auto cursor-default">
         <div className="my-10 text-center">
           <div className="flex justify-center">
-            <h2 className="text-4xl font-bold">Hoteles</h2>
+            <h2 className="text-4xl font-bold">Tours</h2>
             <button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded ml-5">Agregar</button>
           </div>
           <section className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-cols-1 gap-10 my-10 justify-items-center items-center pb-10 border-b">
-            {data?.map((hotel) => (
+            {data?.map((tour) => (
               <div className="drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200">
                 <img
                   className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
-                  src={(hotel.images && typeof hotel.images === 'object' && 'img' in hotel.images && Array.isArray(hotel.images.img)) ? hotel.images.img[0] as string : ""}
+                  src={(tour.images && typeof tour.images === 'object' && 'img' in tour.images && Array.isArray(tour.images.img)) ? tour.images.img[0] as string : ""}
                   alt=""
                 />
                 <div className="p-4 space-y-4">
                   <div className="flex justify-between">
-                    <p className="text-sm text-red-400">{hotel.name}</p>
+                    <p className="text-sm text-red-400">{tour.name}</p>
                   </div>
                   <p className="font-semibold">
-                    {hotel.description}
+                    {tour.description}
                   </p>
-                  <button onClick={() => deleteHotel(hotel.id)} className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">
+                  <button onClick={() => deleteTour(tour.id)} className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">
                     Delete
                   </button>
                 </div>
@@ -55,4 +55,4 @@ const hotelesAdmin = () => {
   );
 }
 
-export default hotelesAdmin;
+export default toursAdmin;

@@ -18,7 +18,7 @@ const Tours = () => {
             <div className="drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200">
               <img
                 className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
-                src={tours?.images as Prisma.JsonObject && typeof tours.images === 'object' ? (tours.images?[0] as Prisma.JsonValue : '') as string : ''}
+                src={(tours.images && typeof tours.images === 'object' && 'img' in tours.images && Array.isArray(tours.images.img)) ? tours.images.img[0] as string : ""}
                 alt=""
               />
               <div className="p-4 space-y-4">

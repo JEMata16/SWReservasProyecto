@@ -244,6 +244,7 @@ function SidebarMenu() {
               </ListItem>
               <ListItem component="div">
                 <Button
+                href='/dashboards/admin/tours'
                   disableRipple
                   onClick={closeSidebar}
                   startIcon={<TableChartTwoToneIcon />}

@@ -6,13 +6,9 @@ import { Container, Grid, ThemeProvider } from '@mui/material';
 
 import AccountBalance from './AccountBalance';
 import Wallets from './Wallets';
-import AccountSecurity from './AccountSecurity';
 import WatchList from './WatchList';
 import { PureLightTheme } from '~/styles/schemes/PureLightTheme';
-import dynamic from 'next/dynamic';
 import PageTitleWrapper from '~/components/PageTitleWrapper';
-import { useContext } from 'react';
-import { SidebarContext } from '~/contexts/SidebarContext';
 import SidebarLayout from '~/layouts/SidebarLayout/';
 
 

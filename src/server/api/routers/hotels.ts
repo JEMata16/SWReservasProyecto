@@ -3,8 +3,11 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const hotelRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
+  getAll: publicProcedure
+  .input(z.object({ take: z.optional(z.number()) }))
+  .query(({ ctx, input }) => {
     return ctx.db.hotel.findMany({
+      take: input?.take ?? undefined,
       select: {
         id: true,
         name: true,
@@ -12,7 +15,6 @@ export const hotelRouter = createTRPCRouter({
         description: true,
         locationsId: true,
         images: true,
-        // Exclude the Reservation relation
       },
     });
   }),
@@ -33,6 +35,15 @@ export const hotelRouter = createTRPCRouter({
   .input(z.object({ text: z.string() }))
   .mutation(({ input, ctx }) => {
     return ctx.db.hotel.delete({ where: { id: input.text } });
+  }),
+  getAllLocations: publicProcedure
+  .query(({ ctx }) => {
+    return ctx.db.locations.findMany();
+  }),
+  hotelBasedOnLocations: publicProcedure
+  .input(z.object({locationId: z.number()}))
+  .query(({ctx, input})=>{
+    return ctx.db.hotel.findMany({where: {locationsId: input.locationId}});
   }),
 
 });

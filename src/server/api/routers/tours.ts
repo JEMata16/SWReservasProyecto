@@ -20,6 +20,15 @@ export const toursRouter = createTRPCRouter({
     .query(({ctx, input})=>{
       return ctx.db.locations.findUnique({where: {id: input.locationId}});
     }),
-  
+    toursBasedOnLocation: publicProcedure
+    .input(z.object({locationId: z.number()}))
+    .query(({ctx, input})=>{
+      return ctx.db.tours.findMany({where: {locationId: input.locationId}});
+    }),
+    deleteById: publicProcedure
+    .input(z.object({text: z.string()}))
+    .mutation(({ input, ctx}) => {
+      return ctx.db.tours.delete({ where: { id: input.text } });
+    }),
   });
   
