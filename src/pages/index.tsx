@@ -10,6 +10,7 @@ import Tours from "~/components/Tours";
 
 const Home: NextPage = () => {
 
+  
   return (
     <>
       <Head>
