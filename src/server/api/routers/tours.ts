@@ -30,5 +30,30 @@ export const toursRouter = createTRPCRouter({
     .mutation(({ input, ctx}) => {
       return ctx.db.tours.delete({ where: { id: input.text } });
     }),
+    addTour: publicProcedure
+    .input(z.object({
+      name: z.string(),
+      description: z.string(),
+      startsAt: z.string(),
+      endsAt: z.string(),
+      locationId: z.number(),
+      images: z.string(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { name, description, startsAt, endsAt, locationId, images } = input;
+     
+      const newTour = await ctx.db.tours.create({
+        data: {
+          name,
+          description,
+          startsAt,
+          endsAt,
+          locationId,
+          images,
+        },
+      });
+
+      return newTour;
+    }),
   });
   

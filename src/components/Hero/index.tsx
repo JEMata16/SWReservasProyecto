@@ -1,10 +1,13 @@
-import { SignInButton, SignOutButton, UserButton, useAuth, useUser } from "@clerk/nextjs";
+import { SignInButton, SignOutButton, SignedIn, UserButton, useAuth, useSession, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useState } from "react";
+import { checkUserRole } from "~/utils/checkUserRole";
 const Hero = () => {
-    const { isSignedIn, user } = useUser();
-    const sessionId = useAuth();
     const [menuOpen, setMenuOpen] = useState(false);
+    const { isSignedIn } = useUser();
+    const {session} = useSession();
+    const userRole = session ? checkUserRole(session) : null;
+   
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
     };
@@ -27,12 +30,14 @@ const Hero = () => {
                         <li className="hover:text-white">Discover</li>
                         <li className="hover:text-white"><a href="/places">Places</a></li>
                         <li className="hover:text-white">Contact</li>
-                        <li className="hover:text-white"><a href="/dashboards/admin/usuarios-interesados">Admin</a></li>
+                        {userRole == "org:admin" ? (
+                            <li className="hover:text-white"><a href="/dashboards/admin/usuarios-interesados">Admin</a></li>
+                        ) : (<></>)
+                            
+                        }
                         {isSignedIn ? (
                             <>
-                                {/* <a href="/dashboards/user/profile/" className="hover:text-white">Bienvenido {user.firstName}</a>
-                                 */}
-                                <UserButton/>
+                                <UserButton />
                                 <SignOutButton>
                                     <li>
                                         <button className="hover:text-orange-500">Sign out</button>
@@ -40,8 +45,8 @@ const Hero = () => {
                                 </SignOutButton>
                             </>
                         ) : (
-                            <Link href={{pathname:"/login"}}>
-                                <p className="text-sm text-blue-600 dark:text-blue-500 hover:underline">Login</p>
+                            <Link href={{ pathname: "/login" }}>
+                                <p className="hover:text-orange-500">Login</p>
                             </Link>
                         )}
                     </ul>

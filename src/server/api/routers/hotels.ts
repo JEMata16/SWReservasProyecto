@@ -45,5 +45,30 @@ export const hotelRouter = createTRPCRouter({
   .query(({ctx, input})=>{
     return ctx.db.hotel.findMany({where: {locationsId: input.locationId}});
   }),
+  addHotel: publicProcedure
+    .input(z.object({
+      name: z.string(),
+      rooms: z.array(z.object({
+        type: z.string(),
+        capacity: z.string(),
+      })),
+      description: z.string(),
+      locationsId: z.number(),
+      images: z.string(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { name, rooms, description, locationsId, images } = input;
+     
+      const newHotel = await ctx.db.hotel.create({
+        data: {
+          name,
+          description,
+          locationsId,
+          rooms: '{"rooms": ' +  JSON.stringify(rooms) + "}",
+          images,
+        },
+      });
 
+      return newHotel;
+    }),
 });
