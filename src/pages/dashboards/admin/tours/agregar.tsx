@@ -74,11 +74,22 @@ const agregarTour = () => {
 
     const handleImageCountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const count = parseInt(event.target.value) || 0;
-        const newImagesArray = Array(count).fill('');
-        setTour(prevTour => ({
-            ...prevTour,
-            images: newImagesArray
-        }));
+        setTour(prevTour => {
+            const newImagesArray = [...prevTour.images]; // Create a copy of the existing images array
+            if (count > prevTour.images.length) {
+                // If the new count is greater than the current count, add new images
+                Array(count - prevTour.images.length).fill(0).forEach(() => {
+                    newImagesArray.push('');
+                });
+            } else if (count < prevTour.images.length) {
+                // If the new count is less than the current count, remove images
+                newImagesArray.splice(count);
+            }
+            return {
+                ...prevTour,
+                images: newImagesArray
+            };
+        });
     };
 
     // Handle time change for startsAt and endsAt

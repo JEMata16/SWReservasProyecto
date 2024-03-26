@@ -8,7 +8,7 @@ import { MenuItem, Select, SelectChangeEvent } from "@mui/material";
 const agregarHotel = () => {
     const initialHotelState = {
         name: '',
-        rooms: [{ type: '', capacity: ''}],
+        rooms: [{ type: '', capacity: '' }],
         description: '',
         locationsId: 1,
         images: [''],
@@ -27,15 +27,16 @@ const agregarHotel = () => {
     // SUBMIT DEL FORM
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        
+
         try {
             const hotelDataImg = {
                 img: hotel.images
             };
             await mutation.mutateAsync({
-                 ...hotel,
-                images: JSON.stringify(hotelDataImg), });
-                setHotel(initialHotelState);
+                ...hotel,
+                images: JSON.stringify(hotelDataImg),
+            });
+            setHotel(initialHotelState);
         } catch (error) {
             return <div>Error</div>
         }
@@ -64,24 +65,44 @@ const agregarHotel = () => {
         type: string;
         capacity: string;
         [key: string]: string; // This is an index signature
-      };
-      const handleRoomChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    };
+    const handleRoomChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
-        const newRooms: Room[] = [...hotel.rooms];
-        newRooms[index]![name] = value;
+        const newRooms = hotel.rooms.map((room, roomIndex) => {
+            if (roomIndex === index) {
+                return {
+                    ...room,
+                    [name]: value
+                };
+            }
+            return room;
+        });
+
         setHotel(prevHotel => ({
-          ...prevHotel,
-          rooms: newRooms
+            ...prevHotel,
+            rooms: newRooms
         }));
-      };
+    };
 
     const handleRoomCountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const count = parseInt(event.target.value) || 0;
-        setHotel(prevHotel => ({
+        setHotel(prevHotel => {
+          const newRooms = [...prevHotel.rooms]; // Create a copy of the existing rooms array
+          if (count > prevHotel.rooms.length) {
+            // If the new count is greater than the current count, add new rooms
+            Array(count - prevHotel.rooms.length).fill(0).forEach(() => {
+              newRooms.push({ type: '', capacity: '' });
+            });
+          } else if (count < prevHotel.rooms.length) {
+            // If the new count is less than the current count, remove rooms
+            newRooms.splice(count);
+          }
+          return {
             ...prevHotel,
-            rooms: Array(count).fill({ type: '', price: '', capacity: '' })
-        }));
-    };
+            rooms: newRooms
+          };
+        });
+      };
 
     // CAMBIO DE IMAGENES
     const handleImageLinkChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,12 +117,23 @@ const agregarHotel = () => {
 
     const handleImageCountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const count = parseInt(event.target.value) || 0;
-        const newImagesArray = Array(count).fill('');
-        setHotel(prevHotel => ({
+        setHotel(prevHotel => {
+          const newImagesArray = [...prevHotel.images]; // Create a copy of the existing images array
+          if (count > prevHotel.images.length) {
+            // If the new count is greater than the current count, add new images
+            Array(count - prevHotel.images.length).fill(0).forEach(() => {
+              newImagesArray.push('');
+            });
+          } else if (count < prevHotel.images.length) {
+            // If the new count is less than the current count, remove images
+            newImagesArray.splice(count);
+          }
+          return {
             ...prevHotel,
             images: newImagesArray
-        }));
-    };
+          };
+        });
+      };
 
 
     return (

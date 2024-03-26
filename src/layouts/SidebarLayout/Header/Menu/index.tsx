@@ -90,7 +90,7 @@ function HeaderMenu() {
             ref={ref}
             onClick={handleOpen}
           >
-            <ListItemText
+            {/* <ListItemText
               primaryTypographyProps={{ noWrap: true }}
               primary={
                 <Box display="flex" alignItems="center">
@@ -100,7 +100,7 @@ function HeaderMenu() {
                   </Box>
                 </Box>
               }
-            />
+            /> */}
           </ListItem>
         </List>
       </ListWrapper>

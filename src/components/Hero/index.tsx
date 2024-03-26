@@ -26,12 +26,11 @@ const Hero = () => {
                 </div>
                 <div className="lg:flex hidden">
                     <ul className="flex space-x-5 font-bold cursor-pointer text-gray-300">
-                        <li className="hover:text-white">About</li>
-                        <li className="hover:text-white">Discover</li>
+                        <li className="hover:text-white"><a href="/about">About</a></li>
                         <li className="hover:text-white"><a href="/places">Places</a></li>
                         <li className="hover:text-white">Contact</li>
                         {userRole == "org:admin" ? (
-                            <li className="hover:text-white"><a href="/dashboards/admin/usuarios-interesados">Admin</a></li>
+                            <li className="hover:text-white"><a href="/dashboards/admin">Admin</a></li>
                         ) : (<></>)
                             
                         }

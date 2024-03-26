@@ -225,11 +225,12 @@ function SidebarMenu() {
             <List component="div">
               <ListItem component="div">
                 <Button
+                  href='/dashboards/admin'
                   disableRipple
                   onClick={closeSidebar}
                   startIcon={<TableChartTwoToneIcon />}
                 >
-                  Transactions List
+                  Estadísticas
                 </Button>
               </ListItem>
               <ListItem component="div">
