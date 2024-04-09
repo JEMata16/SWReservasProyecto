@@ -29,6 +29,7 @@ const Hero = () => {
                         <li className="hover:text-white"><a href="/about">About</a></li>
                         <li className="hover:text-white"><a href="/places">Places</a></li>
                         <li className="hover:text-white">Contact</li>
+                        <li className="hover:text-white"><a href="/affiliation">Affiliation</a></li>
                         {userRole == "org:admin" ? (
                             <li className="hover:text-white"><a href="/dashboards/admin">Admin</a></li>
                         ) : (<></>)
