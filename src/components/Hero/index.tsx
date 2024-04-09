@@ -28,7 +28,9 @@ const Hero = () => {
                     <ul className="flex space-x-5 font-bold cursor-pointer text-gray-300">
                         <li className="hover:text-white"><a href="/about">About</a></li>
                         <li className="hover:text-white"><a href="/places">Places</a></li>
-                        <li className="hover:text-white">Contact</li>
+                        <li className="hover:text-white"><a href="/contact">Contact</a></li>
+                        <li className="hover:text-white"><a href="/affiliation">Affiliation program</a></li>
+                        <li className="hover:text-white"><a href="/cars">Rent a car</a></li>
                         {userRole == "org:admin" ? (
                             <li className="hover:text-white"><a href="/dashboards/admin">Admin</a></li>
                         ) : (<></>)

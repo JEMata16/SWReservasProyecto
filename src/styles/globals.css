@@ -2,3 +2,156 @@
 @tailwind components;
 @tailwind utilities;
 
+form.contact-form {
+    width: 340px;
+    height: 440px;
+    background: #e6e6e6;
+    border-radius: 8px;
+    box-shadow: 0 0 40px -10px #000;
+    margin: calc(50vh - 220px) auto;
+    padding: 20px 30px;
+    max-width: calc(100vw - 40px);
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+  }
+  
+  .contact-form h2 {
+    margin: 10px 0;
+    padding-bottom: 10px;
+    width: 180px;
+    color: #78788c;
+    border-bottom: 3px solid #78788c;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background: none;
+    outline: none;
+    resize: none;
+    border: 0;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.3s;
+    border-bottom: 2px solid #bebed2;
+  }
+  
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-bottom: 2px solid #78788c;
+  }
+  
+  .contact-form label {
+    display: block;
+    margin: 15px 0 5px;
+  }
+  
+  .contact-form .submit {
+    float: right;
+    padding: 8px 12px;
+    margin: 8px 0 0;
+    font-family: 'Montserrat', sans-serif;
+    border: 2px solid #78788c;
+    background: 0;
+    color: #5a5a6e;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .contact-form .submit:hover {
+    background: #78788c;
+    color: #fff;
+  }
+  
+  /* Estilos adicionales para errores (opcional) */
+  
+  .contact-form .error {
+    color: red;
+    font-size: 12px;
+    margin: 5px 0;
+  }
+  
+  body {
+    background: hsl(204, 26%, 93%);
+    margin: 0;
+  }
+  
+  .container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+  
+  .contact-form {
+    width: 340px;
+    height: auto;
+    background: #e6e6e6;
+    border-radius: 8px;
+    box-shadow: 0 0 40px -10px #000;
+    margin: 0 20px;
+    padding: 20px 30px;
+    max-width: calc(100vw - 40px);
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+  }
+  
+  .title {
+    margin: 10px 0;
+    padding-bottom: 10px;
+    width: 180px;
+    color: #78788c;
+    border-bottom: 3px solid #78788c;
+  }
+  
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    background: none;
+    outline: none;
+    resize: none;
+    border: 0;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.3s;
+    border-bottom: 2px solid #bebed2;
+  }
+  
+  
+  .label {
+    display: block;
+    margin: 15px 0 5px;
+  }
+  .contact-form input:focus,
+  .contact-form textarea:focus {
+    border-bottom: 2px solid #78788c;
+  }
+  .submit {
+    float: right;
+    padding: 8px 12px;
+    margin: 8px 0 0;
+    font-family: 'Montserrat', sans-serif;
+    border: 2px solid #78788c;
+    background: 0;
+    color: #5a5a6e;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .submit:hover {
+    background: #78788c;
+    color: #fff;
+  }
+  
+  .map-container {
+    margin: 0;
+  }
+  
+  .map-container iframe {
+    width: 100%;
+    height: 440px;
+  }
+  
