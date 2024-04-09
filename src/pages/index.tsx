@@ -19,7 +19,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Hero/>
-      <main>
+      <main className="bg-white-500">
         <Places/>
         <Tours/>
       </main>

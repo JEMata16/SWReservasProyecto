@@ -1,18 +1,37 @@
 import React from 'react';
 import HotelDetails from '../components/HotelDetails';
-import { useRouter } from 'next/router';
+import { NextPageContext } from 'next';
+import { useAuth } from '@clerk/nextjs';
 
 interface HotelDetailsPageProps {
-  hotelId: string | undefined; // Adjust the type based on your actual data type
+  hotelId: string | undefined; 
+  onRatingUpdate?: () => Promise<void>;
 }
 
-const HotelDetailsPage: React.FC<HotelDetailsPageProps> = () => {
-  const router = useRouter();
-  const { hotelId } = router.query;
+const HotelDetailsPage: React.FC<HotelDetailsPageProps> = ({ hotelId }) => {
+  const {userId} = useAuth()
+  const handleRatingUpdate = async (newRating: number) => {
+    try{
+      // const notificationMessage = `The rating for hotel ${hotelId} has been updated to ${newRating}`;
+    } catch(error){
+      console.error('Error submitting rating:', error);
+    }
+  }
 
-  // Now, you can use the hotelId in your component logic
+  return <HotelDetails hotelId={hotelId as string} userId={userId} onRatingUpdate={handleRatingUpdate}/>;
+};
 
-  return <HotelDetails hotelId={hotelId as string} />;
+export const getServerSideProps = async (context: NextPageContext) => {
+  // Fetch data here, for example:
+  const { hotelId } = context.query;
+  
+  // You can perform any necessary data fetching or computations here
+
+  return {
+    props: {
+      hotelId
+    }
+  };
 };
 
 export default HotelDetailsPage;

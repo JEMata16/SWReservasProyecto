@@ -1,7 +1,7 @@
 
 import PageHeader from './PageHeader';
 
-import { Container, Grid, NoSsr, ThemeProvider } from '@mui/material';
+import { Container, Grid, ThemeProvider } from '@mui/material';
 
 
 
@@ -14,7 +14,7 @@ import Graphics from './Graphics';
 const theme = PureLightTheme
 
 function DashboardAdmin() {
-
+  
   return (
     <>
       <SidebarLayout>

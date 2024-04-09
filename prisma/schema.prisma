@@ -32,6 +32,7 @@ model Hotel {
   Rervation   Reservation[]
   locationsId Int
   images      Json
+  hotelRating HotelRating[]
 }
 
 model Tours {
@@ -55,13 +56,24 @@ model Locations {
 
 model Reservation {
   id       String   @id @default(uuid())
-  hotel    Hotel?    @relation(fields: [hotelId], references: [id])
+  hotel    Hotel?   @relation(fields: [hotelId], references: [id])
   hotelId  String?
-  tour     Tours?    @relation(fields: [tourId], references: [id])
+  tour     Tours?   @relation(fields: [tourId], references: [id])
   tourId   String?
   userId   String
   phone    String
   dateFrom DateTime @default(now())
+}
+
+model HotelRating {
+  id        String   @id @default(uuid())
+  hotel     Hotel?   @relation(fields: [hotelId], references: [id])
+  hotelId   String
+  message   String
+  userId    String
+  rating    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {
@@ -69,4 +81,3 @@ enum Role {
   ADMIN
   EMPLOYEE
 }
-

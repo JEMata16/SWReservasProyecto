@@ -9,7 +9,7 @@ import { api } from "~/utils/api";
 const hotelesAdmin = () => {
   const { data, isLoading } = api.hotels.getAll.useQuery({});
   const mutation = api.hotels.deleteById.useMutation();
-  if (isLoading) return <div className="text-4x1 font-bold">Loading...</div>
+  if (isLoading) return <span className="loading loading-spinner loading-md"></span>
   const deleteHotel = async (id: string) => {
     try {
       await mutation.mutateAsync({

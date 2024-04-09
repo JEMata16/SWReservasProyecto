@@ -1,15 +1,18 @@
 import { api } from "~/utils/api";
 import Hero from "../Hero";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { Typography } from "@mui/material";
 import { Prisma } from "@prisma/client";
+import axios from "axios";
 
 interface HotelDetailsProps {
   hotelId: string;
+  userId: string | null | undefined;
+  onRatingUpdate: (newRating: number) => Promise<void>;
 }
 interface CarouselProps {
   images: Prisma.JsonObject | undefined;
@@ -17,7 +20,6 @@ interface CarouselProps {
 interface ReservationProps {
   id: string;
 }
-
 
 interface ModalProps {
   isOpen: boolean;
@@ -117,7 +119,7 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev === imagesItems.length - 1 ? 0 : prev + 1));
   };
-  
+
   return (
     <div className="carousel content-center w-full">
       {imagesItems.map((imageUrl: Prisma.JsonValue, index: number) => (
@@ -138,7 +140,7 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
 };
 
 
-const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId }) => {
+const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId, userId, onRatingUpdate }) => {
   const { data } = api.hotels.getById.useQuery({ text: hotelId })
   const hotel = {
     id: data?.id,
@@ -149,7 +151,86 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId }) => {
     location: api.hotels.getHotelLocalization.useQuery({ locationId: (data?.locationsId as number) }).data?.name,
   };
 
+  const mutation = api.hotelRating.createHotelRating.useMutation();
   const roomsList = hotel.rooms && hotel.rooms['rooms'] ? hotel.rooms['rooms'] as Prisma.JsonArray : [];
+
+  const initialRatingState = {
+    hotelId: hotelId,
+    rating: 0,
+    message: "",
+    userId: userId || "",
+  }
+  const [rating, setRating] = useState(initialRatingState);
+  const handleRatingSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault();
+    try {
+      await mutation.mutateAsync({
+        ...rating,
+      });
+      onRatingUpdate(rating.rating);
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+    }
+  };
+
+  const handleRatingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const ratingValue = Number(value);
+    setRating(prevState => ({
+      ...prevState,
+      rating: ratingValue,
+    }));
+  };
+
+  type hotelReview = {
+    id: string;
+    message: string;
+    rating: number;
+    userId: string;
+    hotelId: string;
+    createdAt: Date;
+    imageUrl: string;
+    firstName: string;
+  };
+
+  type UserDetailsType = {
+    imageUrl: string;
+    firstName: string;
+  };
+
+  const [hotelRatings, setHotelRatings] = useState<hotelReview[]>([]);
+  const [hasRated, setHasRated] = useState(false);
+  const ratingsData = api.hotelRating.getHotelRatings.useQuery({ hotelId });
+
+  useEffect(() => {
+    if (!ratingsData || ratingsData.isLoading || !ratingsData.data || ratingsData.data.length === 0) {
+      
+      return;
+    }
+    const fetchHotelRatings = async () => {
+      try {
+        const data = ratingsData.data || [];
+        const filledRatings = await Promise.all(
+          data.map(async (rating) => {
+            const userResponse = await axios.get<{ user: UserDetailsType }>(`/api/userById/${rating.userId}`);
+            if(rating.userId === userId) {
+              setHasRated(true);
+            }
+            return {
+              ...rating,
+              imageUrl: userResponse.data.user.imageUrl,
+              firstName: userResponse.data.user.firstName,
+            };
+          })
+        );
+
+        setHotelRatings(filledRatings);
+      } catch (error) {
+        console.error("Error fetching hotel ratings:", error);
+      }
+    };
+    fetchHotelRatings();
+  }, [ratingsData, hotelId]);
   return (
     <>
       <Hero />
@@ -161,7 +242,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId }) => {
 
           <h3 className="text-xl font-semibold mt-4">Rooms</h3>
           <ul className="list-disc pl-4">
-            
+
             {roomsList.map((room: Prisma.JsonValue, index: number) => (
               <li key={index} className="mb-2">{(room as { type: string })['type']}</li>
             ))}
@@ -178,6 +259,118 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId }) => {
           </div>
         </div>
       </div>
+
+      <div className="flex flex-col items-center">
+        <h2 className="text-xl font-semibold py-2">Rate this hotel</h2>
+        <div>
+          <form onSubmit={handleRatingSubmit}>
+            <div>
+              {[...Array(5)].map((_, index) => (
+                <label key={index} className="inline-flex items-center">
+                  <input
+                    key={index}
+                    className="hidden"
+                    name="rating"
+                    value={index + 1}
+                    type='radio'
+                    onChange={(e) => handleRatingChange(e)}
+                  />
+                  <svg
+                    key={index}
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-8 w-8 fill-current ${index < rating.rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
+                  </svg>
+                </label>
+              ))}
+              <div className="grid">
+                <label className="text-lg font-semibold py-2 mb-2 ">Message: </label>
+                <textarea
+                  value={rating.message}
+                  onChange={(e) => setRating(prevState => ({ ...prevState, message: e.target.value }))}
+                  rows={6}
+                  cols={60}
+                  className="border border-gray-300 rounded-lg p-2"
+                />
+              </div>
+            </div>
+            <button type="submit" 
+             className={`bg-${hasRated ? "blue" : "orange"}-500 hover:bg-${hasRated ? "gray" : "orange"}-700 text-white font-bold py-2 px-8 rounded mt-2`}
+             disabled={hasRated}
+            >
+              {hasRated ? "Rating submitted" : "Submit Rating"}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div className="w-full space-y-2 mt-4 border">
+        {hotelRatings && hotelRatings.length > 0 ? (
+          <div className="w-full p-8 bg-gray-100">
+            <h2>{hotel.name}'s Reviews:</h2>
+            <ul className="flex py-5 flex-col space-x-2">
+              {hotelRatings.map((review: any, index: number) => (
+                <li key={review.id} className={index !== hotelRatings.length - 1 ? 'border-b-2 border-gray-200 pb-2' : 'pb-2'}>
+                  <div className="flex items-center">
+                    <img src={review.imageUrl} alt={review.firstName} className="h-8 w-8 rounded-full mr-2" />
+                    <h3>{review.firstName}</h3>
+                  </div>
+                  <div className="flex inline-flex">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={`h-8 w-8 fill-current ${review.rating >= 1 ? 'text-yellow-500' : 'text-gray-300'}`}
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
+                    </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={`h-8 w-8 fill-current ${review.rating >= 2 ? 'text-yellow-500' : 'text-gray-300'}`}
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
+                    </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={`h-8 w-8 fill-current ${review.rating >= 3 ? 'text-yellow-500' : 'text-gray-300'}`}
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
+                    </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={`h-8 w-8 fill-current ${review.rating >= 4 ? 'text-yellow-500' : 'text-gray-300'}`}
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
+                    </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={`h-8 w-8 fill-current ${review.rating >= 5 ? 'text-yellow-500' : 'text-gray-300'}`}
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
+                    </svg>
+                  </div>
+                  <div className="flex items-center">
+                    <p>{review.message}</p>
+                  </div>
+
+                </li>
+              ))}
+            </ul>
+          </div>
+
+        ) : (
+          <div className="w-full p-8 bg-gray-100">
+            <h2>No reviews yet</h2>
+          </div>
+        )}
+      </div>
+
+
     </>
   );
 };

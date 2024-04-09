@@ -170,7 +170,7 @@ function HeaderSearch() {
                       sx={{ fontWeight: 'bold' }}
                       variant="body2"
                     >
-                      Dashboard for Healthcare Platform
+                      Detalles de los hoteles
                     </Link>
                   </Box>
                   <Typography
@@ -181,8 +181,7 @@ function HeaderSearch() {
                         lighten(theme.palette.secondary.main, 0.5)
                     }}
                   >
-                    This page contains all the necessary information for
-                    managing all hospital staff.
+                    Esta pagina contiene las herramientas necesarias para la administracion de los hoteles
                   </Typography>
                 </Box>
                 <ChevronRightTwoToneIcon />
@@ -209,7 +208,7 @@ function HeaderSearch() {
                       sx={{ fontWeight: 'bold' }}
                       variant="body2"
                     >
-                      Example Projects Application
+                       Detalles tours
                     </Link>
                   </Box>
                   <Typography
@@ -220,7 +219,7 @@ function HeaderSearch() {
                         lighten(theme.palette.secondary.main, 0.5)
                     }}
                   >
-                    This is yet another search result pointing to a app page.
+                     Esta pagina contiene las herramientas necesarias para la administracion de los hoteles.
                   </Typography>
                 </Box>
                 <ChevronRightTwoToneIcon />
@@ -247,7 +246,7 @@ function HeaderSearch() {
                       sx={{ fontWeight: 'bold' }}
                       variant="body2"
                     >
-                      Search Results Page
+                      Notificaciones
                     </Link>
                   </Box>
                   <Typography
@@ -258,8 +257,7 @@ function HeaderSearch() {
                         lighten(theme.palette.secondary.main, 0.5)
                     }}
                   >
-                    Choose if you would like to show or not this typography
-                    section here...
+                    Revisa los detalles de los mensajes de los usuarios.
                   </Typography>
                 </Box>
                 <ChevronRightTwoToneIcon />
@@ -267,7 +265,7 @@ function HeaderSearch() {
             </List>
             <Divider sx={{ mt: 1, mb: 2 }} />
             <Box sx={{ textAlign: 'center' }}>
-              <Button color="primary">View all search results</Button>
+              <Button color="primary">Ver todos los resultados</Button>
             </Box>
           </DialogContent>
         )}

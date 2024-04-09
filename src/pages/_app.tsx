@@ -3,13 +3,18 @@ import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ClerkLoaded, ClerkLoading, ClerkProvider } from "@clerk/nextjs";
 import Footer from "~/components/Footer";
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider {...pageProps}>
-      <Component {...pageProps} />
-      <Footer/>
+      <ClerkLoading>
+        <span className="loading loading-spinner loading-md"></span>
+      </ClerkLoading>
+      <ClerkLoaded>
+        <Component {...pageProps} />
+        <Footer />
+      </ClerkLoaded>
     </ClerkProvider>
   );
 };
