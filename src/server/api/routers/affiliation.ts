@@ -41,6 +41,14 @@ export const affiliationRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const id = input.id;
       try {
+        await ctx.db.affiliateReservation.deleteMany({
+          where: { AffiliateHotels: { userId: id } },
+        });
+
+        await ctx.db.affiliateHotels.deleteMany({
+          where: { userId: id },
+        });
+
         const deletedAffiliation = await ctx.db.userAffiliation.delete({
           where: { userId: id },
         });
@@ -132,5 +140,59 @@ export const affiliationRouter = createTRPCRouter({
           email: input.email,
         },
       });
+    }),
+    getReservations: publicProcedure
+    .input(z.object({userid: z.string()}))
+    .query(async ({ input, ctx }) => {
+        const reservations = await ctx.db.affiliateReservation.findMany({where: {AffiliateHotels: {userId: input.userid}}, include: {AffiliateHotels: true}});
+        const formattedReservations = reservations.map((reservation) => {
+          // Check if the reservation has a hotel id before including it
+          if (reservation.AffiliateHotels && reservation.AffiliateHotels.id && reservation.AffiliateHotels.userId === input.userid) {
+            return {
+              id: reservation.id,
+              userId: reservation.userId,
+              phone: reservation.phone,
+              dateFrom: reservation.dateFrom,
+              hotel: {
+                id: reservation.AffiliateHotels.id,
+                name: reservation.AffiliateHotels.name,
+                // Include other hotel fields as needed
+              },
+            };
+          }
+          return null; // Skip reservations without a hotel id
+        }).filter(Boolean); // Remove any null entries
+
+        return formattedReservations;
+    }),
+    deleteReservation: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const id = input.id;
+      try {
+        const deletedAffiliation = await ctx.db.affiliateReservation.delete({
+          where: { id },
+        });
+        return deletedAffiliation;
+      } catch (error) {
+        throw new Error("Failed to delete affiliation");
+      }
+    }),
+    getGraphic: publicProcedure
+    .input(z.object({userid: z.string()}))
+    .query(async ({ input, ctx }) => {
+        const reservations = await ctx.db.affiliateReservation.findMany({where: {AffiliateHotels: {userId: input.userid}}, include: {AffiliateHotels: true}});
+        const formattedReservations = reservations.map((reservation) => {
+          // Check if the reservation has a hotel id before including it
+          if (reservation.AffiliateHotels && reservation.AffiliateHotels.id && reservation.AffiliateHotels.userId === input.userid) {
+            return {
+              reservationLabels: reservation.AffiliateHotels.name,
+              reservationSeries: reservations.filter((res) => res.AffiliateHotels?.id === reservation.AffiliateHotels?.id).length
+            };
+          }
+          return null; // Skip reservations without a hotel id
+        }).filter(Boolean); // Remove any null entries
+
+        return formattedReservations;
     }),
 });

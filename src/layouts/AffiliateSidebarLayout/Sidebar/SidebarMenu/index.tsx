@@ -15,7 +15,7 @@ import { SidebarContext } from 'src/contexts/SidebarContext';
 import HotelIcon from '@mui/icons-material/Hotel';
 import BookOnlineIcon from '@mui/icons-material/BookOnline';
 import TableChartTwoToneIcon from '@mui/icons-material/TableChartTwoTone';
-
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { useRouter } from 'next/router';
 
 const MenuWrapper = styled(Box)(
@@ -179,7 +179,7 @@ function AffiliateSidebarMenu() {
             <List component="div">
               <ListItem component="div">
                 <Button
-                  href='/dashboards/admin/usuarios-interesados'
+                  href={`/dashboards/${affiliation}/usuarios-interesados`}
                   disableRipple
                   onClick={closeSidebar}
                   startIcon={<BookOnlineIcon />}
@@ -203,12 +203,12 @@ function AffiliateSidebarMenu() {
             <List component="div">
               <ListItem component="div">
                 <Button
-                  href='/dashboards/admin'
+                  href={`/dashboards/${affiliation}`}
                   disableRipple
                   onClick={closeSidebar}
                   startIcon={<TableChartTwoToneIcon />}
                 >
-                  Estadísticas
+                  Statistics
                 </Button>
               </ListItem>
               <ListItem component="div">
@@ -219,6 +219,16 @@ function AffiliateSidebarMenu() {
                   startIcon={<HotelIcon />}
                 >
                   Hotels
+                </Button>
+              </ListItem>
+              <ListItem component="div">
+                <Button
+                  href={`/dashboards/${affiliation}/calendar`}
+                  disableRipple
+                  onClick={closeSidebar}
+                  startIcon={<CalendarMonthIcon />}
+                >
+                  Calendar
                 </Button>
               </ListItem>
             </List>
