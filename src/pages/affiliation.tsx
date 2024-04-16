@@ -1,268 +1,435 @@
+
+import { useAuth } from '@clerk/nextjs';
+import { User } from '@clerk/nextjs/server';
+import { Typography } from '@mui/material';
+import axios from 'axios';
 import React from 'react';
+import Link from "next/link";
 import Hero from '~/components/Hero';
+import { api } from '~/utils/api';
 
-const Affiliation = () => {
-  return (
-    <><Hero />
-    <div className='flex min-h-screen pt-[30px] px-[40px]'>
-   <div className="min-w-full">
-       <p className="text-[#00153B] text-[20px] leading-[40px] font-semibold">
-           Affiliation
-       </p>
+interface ModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    children: React.ReactNode;
+}
 
-       <div>
-           <p className="text-[#717F87] text-[15px] leading-[27px] font-medium">
-           Do you want to be part of the family and earn income?
-           </p>
-       </div>
+const DowngradeButton = () => {
+    return (
+        <div className="mt-[25px]">
+            <button className="bg-[#006EF5] rounded-[5px] py-[15px] px-[25px] text-[#fff] text-[14px] leading-[17px] font-semibold">Downgrade -</button>
+        </div>
+    )
+}
 
-       <div className="mt-[30px] inline-flex border border-[#E1E3E5] shadow-[0px 1px 2px #E1E3E5] divide-[#E1E3E5] divide-x rounded-[5px]">
-            <button className="bg-white hover:bg-[#F6F6F7] hover:text-[#717F87] text-[#0E1823] leading-[16px] text-[13px] font-semibold font-bold py-[15px] px-[25px] rounded-l">
-                Monthly
-            </button>
-			{/* <button className="bg-white hover:bg-[#F6F6F7] hover:text-[#717F87] text-[#0E1823] text-[13px] leading-[16px] font-semibold font-bold py-[15px] px-[25px] rounded-r">
-                Annual
-            </button> */}
-		</div>
+const UpgradeButton = () => {
+    return (
+        <div className="mt-[25px]">
+            <button className="bg-[#006EF5] rounded-[5px] py-[15px] px-[25px] text-[#fff] text-[14px] leading-[17px] font-semibold">Upgrade +</button>
+        </div>
+    )
+}
 
-        <div className="mt-[20px] grid grid-cols-3 gap-[20px]">
-            <div key="1" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
-                <div className="pt-[15px] px-[25px] pb-[25px]">
-                    <div className="flex justify-end">
-                        <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
-                            <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
-                                Starter
-                            </p>
-                        </div>
-                    </div>
+const CurrentPlanButton = () => {
+    return (
+        <div className="mt-[25px]">
+            <button className="bg-[#fb5607] rounded-[5px] py-[15px] px-[25px] text-[#fff] text-[14px] leading-[17px] font-semibold">Current Plan</button>
+        </div>
+    )
+}
 
-                    <div>
-                        <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
-                            Trial
-                        </p>
-                        <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
-                            Free
-                        </p>
-                    </div>
+const AskForPlan = ({ userEmail }: { userEmail: string | null }) => {
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
 
-                    <div>
-                        <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
-                        30 days
-                        </p>
-                        
-                    </div>
-                </div>
-
-                <div className="pt-[25px] px-[25px] pb-[35px]">
-                    <div>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        1 active listing
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Contact information
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Availability calendar
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Booking management
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Basic support
-                        </p>
-                    </div>
-
-                    <div className="mt-[25px]">
-                        <button className="bg-[#006EF5] rounded-[5px] py-[15px] px-[25px] text-[#fff] text-[14px] leading-[17px] font-semibold">Downgrade +</button>
-                    </div>
-                </div>
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+    return (
+        <>
+            <div className="mt-[25px]">
+                <button onClick={openModal} className="bg-[#fb5607] rounded-[5px] py-[15px] px-[25px] text-[#fff] text-[14px] leading-[17px] font-semibold">Ask for plan</button>
             </div>
-
-            <div key="2" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
-                <div className="pt-[15px] px-[25px] pb-[25px]">
-                    <div className="flex justify-end">
-                        <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
-                            <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
-                            Basic
-                            </p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
-                            Fast Start
-                        </p>
-                        <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
-                            $10
-                        </p>
-                    </div>
-
-                    <div>
-                        <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
-                            30 days
-                        </p>
-                       
-                    </div>
-                </div>
-
-                <div className="pt-[25px] px-[25px] pb-[35px]">
-                    <div>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        3 active listings
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Contact information
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Availability calendar
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Booking management
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Basic support
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Basic performance statistics
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Option to add additional photos
-                        </p>
-                    </div>
-
+            <Modal isOpen={isModalOpen} onClose={closeModal}>
+                <div>
+                    <Typography sx={{ fontWeight: "bold", textShadow: "1px 1px 2px rgba(0, 0, 0, 0.3)" }} variant="h4" id="modal-title" mb={2}>
+                        We will be sending an email to the following email address:
+                    </Typography>
+                    <Typography variant="h5">{userEmail}</Typography>
                     <div className="mt-[25px]">
-                        <button className="bg-[#E1E3E5] rounded-[5px] py-[15px] px-[25px] text-[#fff] text-[14px] leading-[17px] font-semibold">Current Plan</button>
+                        <button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">
+                            Know more
+                        </button>
                     </div>
                 </div>
-            </div>
+            </Modal >
+        </>
+    )
+}
 
-            <div key="3" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
-                <div className="pt-[15px] px-[25px] pb-[25px]">
-                    <div className="flex justify-end">
-                        <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
-                            <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
-                                Mid
-                            </p>
-                        </div>
-                    </div>
 
-                    <div>
-                        <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
-                            Accelerate
-                        </p>
-                        <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
-                            $30
-                        </p>
-                    </div>
 
-                    <div>
-                        <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
-                            30 days
-                        </p>
-                        
-                    </div>
-                </div>
+const renderButtonBasedOnPlan = (planAffiliation: number | null, cardAffiliation: number, userEmail: string | null) => {
+    if (!planAffiliation) {
+        return <AskForPlan userEmail={userEmail} />;
+    } else if (cardAffiliation > planAffiliation) {
+        return <UpgradeButton />;
+    } else if (cardAffiliation < planAffiliation) {
+        return <DowngradeButton />;
+    } else {
+        return <CurrentPlanButton />;
+    }
+};
 
-                <div className="pt-[25px] px-[25px] pb-[35px]">
-                    <div>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        10 active listings
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Contact information
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Availability calendar
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Booking management
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Priority support
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Detailed performance statistics
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Option to add photos and videos
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Boost your listing in search
-                        </p>
-                    </div>
+const Modal = ({ isOpen, onClose, children }: ModalProps) => {
+    const modalClasses = isOpen ? 'fixed inset-0 flex items-center justify-center' : 'hidden';
 
-                    <div className="mt-[25px]">
-                        <button className="bg-[#006EF5] rounded-[5px] py-[15px] px-[25px] text-[#fff] text-[14px] leading-[17px] font-semibold">Upgrade +</button>
-                    </div>
-                </div>
-            </div>
-            <div key="4" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
-                <div className="pt-[15px] px-[25px] pb-[25px]">
-                    <div className="flex justify-end">
-                        <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
-                            <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
-                                Pro
-                            </p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
-                            Premium
-                        </p>
-                        <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
-                            $50
-                        </p>
-                    </div>
-
-                    <div>
-                        <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
-                            30 days
-                        </p>
-                        
-                        
-                    </div>
-                </div>
-
-                <div className="pt-[25px] px-[25px] pb-[35px]">
-                    <div>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Unlimited listings
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Contact information
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Availability calendar
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Booking management
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Premium support
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Full performance statistics
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Option to add photos, videos, and virtual tours
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Featured listing in search
-                        </p>
-                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                        Personalized advice
-                        </p>
-                        
-                    </div>
-
-                    <div className="mt-[25px]">
-                        <button className="bg-[#E1E3E5] rounded-[5px] py-[15px] px-[25px] text-[#fff] text-[14px] leading-[17px] font-semibold">Current Plan</button>
-                    </div>
-                </div>
+    return (
+        <div className={`${modalClasses} bg-black bg-opacity-50`}>
+            <div className="bg-white p-8 max-w-md rounded-lg shadow-md">
+                <button className="absolute top-28 right-4 text-gray-200" onClick={onClose}>
+                    X
+                </button>
+                {children}
             </div>
         </div>
-   </div>
-</div></> )}
+    );
+};
+
+const Affiliation = () => {
+    const [userEmail, setUserEmail] = React.useState<string | null>(null);
+    const { userId } = useAuth();
+    const { data: userAffiliation } = api.affiliation.getByUserId.useQuery({ id: userId ?? '' });
+    const affiliationMapping: { [key: string]: number } = {
+        FREE: 0,
+        FAST: 1,
+        ACCELERATE: 2,
+        PREMIUM: 3,
+    };
+    const { data: hotels } = api.affiliation.getHotels.useQuery();
+
+    let affiliation: number | null = null;
+
+    React.useEffect(() => {
+
+        const fetchUser = async () => {
+            try {
+                const userResponse = await axios.get<{ user: User }>(`/api/userById/${userId}`);
+                setUserEmail(userResponse.data.user.emailAddresses?.[0]?.emailAddress ?? null);
+            } catch {
+                return null;
+            }
+
+        };
+        fetchUser()
+    }, [userId]);
+
+    if (userAffiliation) {
+        const affiliationString = userAffiliation?.affiliation;
+        affiliation = affiliationMapping[affiliationString] || null;
+    }
+
+    return (
+        <>
+            <Hero />
+            {hotels && hotels.length > 0 && (
+                <div className="w-4/5 m-auto cursor-default">
+                    <div className="my-10 text-center">
+                        <h1 className="text-4xl font-bold">Check out our affiliate users hotels</h1>
+                        <section className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-cols-1 gap-10 my-10 justify-items-center items-center pb-10 border-b">
+                            {hotels?.map((hotel) => (
+                                <div className="flex flex-col drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200" style={{ height: "360px" }}>
+
+                                    <img
+                                        className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
+                                        src={(hotel.images && typeof hotel.images === 'object' && 'img' in hotel.images && Array.isArray(hotel.images.img)) ? hotel.images.img[0] as string : ""}
+                                        alt=""
+                                    />
+                                    <div className="flex flex-col justify-between h-full p-4 space-y-4">
+                                        <div className="flex justify-between">
+                                            <p className="text-sm text-red-400">{hotel.name}</p>
+                                        </div>
+                                        <p className="font-semibold line-clamp-3">
+                                            {hotel.description}
+                                        </p>
+                                        <div className="mt-auto">
+                                            <button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">
+                                                <Link href={{ pathname: "/affiliate-hotel-details", query: { hotelId: hotel.id } }}>
+                                                    See more
+                                                </Link>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </section>
+                    </div>
+                </div>
+            )}
+            <div className="my-10 text-center">
+                <h1 className="text-4xl font-bold">Want to join the team?</h1>
+            </div>
+
+            <div className='flex min-h-screen pt-[30px] px-[40px]'>
+                <div className="min-w-full">
+                    <p className="text-[#00153B] text-[20px] leading-[40px] font-semibold">
+                        Affiliation
+                    </p >
+                    <div>
+                        <p className="text-[#717F87] text-[15px] leading-[27px] font-medium">
+                            Do you want to be part of the family and earn income?
+                        </p>
+                    </div>
+
+                    <div className="mt-[30px] inline-flex border border-[#E1E3E5] shadow-[0px 1px 2px #E1E3E5] divide-[#E1E3E5] divide-x rounded-[5px]">
+                        <button className="bg-white hover:bg-[#F6F6F7] hover:text-[#717F87] text-[#0E1823] leading-[16px] text-[13px] font-semibold font-bold py-[15px] px-[25px] rounded-l">
+                            Monthly
+                        </button>
+                    </div>
+                    {/* FIRST CARD */}
+                    <div className="mt-[20px] grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 grid-cols-1 gap-[20px]">
+                        <div key="1" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                            <div className="pt-[15px] px-[25px] pb-[25px]">
+                                <div className="flex justify-end">
+                                    <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
+                                        <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
+                                            Starter
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
+                                        Trial
+                                    </p>
+                                    <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
+                                        Free
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
+                                        30 days
+                                    </p>
+
+                                </div>
+                            </div>
+
+                            <div className="pt-[25px] px-[25px] pb-[35px]">
+                                <div>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        1 active listing
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Contact information
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Availability calendar
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Booking management
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Basic support
+                                    </p>
+                                </div>
+                                {renderButtonBasedOnPlan(affiliation, 0, userEmail)}
+                            </div>
+                        </div>
+
+                        {/* SECOND CARD */}
+                        <div key="2" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                            <div className="pt-[15px] px-[25px] pb-[25px]">
+                                <div className="flex justify-end">
+                                    <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
+                                        <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
+                                            Basic
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
+                                        Fast Start
+                                    </p>
+                                    <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
+                                        $10
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
+                                        30 days
+                                    </p>
+
+                                </div>
+                            </div>
+
+                            <div className="pt-[25px] px-[25px] pb-[35px]">
+                                <div>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        3 active listings
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Contact information
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Availability calendar
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Booking management
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Basic support
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Basic performance statistics
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Option to add additional photos
+                                    </p>
+                                </div>
+
+                                {renderButtonBasedOnPlan(affiliation, 1, userEmail)}
+                            </div>
+                        </div>
+
+                        {/* THIRD CARD */}
+                        <div key="3" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                            <div className="pt-[15px] px-[25px] pb-[25px]">
+                                <div className="flex justify-end">
+                                    <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
+                                        <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
+                                            Mid
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
+                                        Accelerate
+                                    </p>
+                                    <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
+                                        $30
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
+                                        30 days
+                                    </p>
+
+                                </div>
+                            </div>
+
+                            <div className="pt-[25px] px-[25px] pb-[35px]">
+                                <div>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        10 active listings
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Contact information
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Availability calendar
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Booking management
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Priority support
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Detailed performance statistics
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Option to add photos and videos
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Boost your listing in search
+                                    </p>
+                                </div>
+
+                                {renderButtonBasedOnPlan(affiliation, 2, userEmail)}
+                            </div>
+                        </div>
+
+                        {/* FOURTH CARD */}
+                        <div key="4" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                            <div className="pt-[15px] px-[25px] pb-[25px]">
+                                <div className="flex justify-end">
+                                    <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
+                                        <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
+                                            Pro
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
+                                        Premium
+                                    </p>
+                                    <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
+                                        $50
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
+                                        30 days
+                                    </p>
+
+
+                                </div>
+                            </div>
+
+                            <div className="pt-[25px] px-[25px] pb-[35px]">
+                                <div>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Unlimited listings
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Contact information
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Availability calendar
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Booking management
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Premium support
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Full performance statistics
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Option to add photos, videos, and virtual tours
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Featured listing in search
+                                    </p>
+                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                        Personalized advice
+                                    </p>
+
+                                </div>
+
+                                {renderButtonBasedOnPlan(affiliation, 3, userEmail)}
+                            </div>
+                        </div>
+
+                    </div>
+                </div >
+            </div >
+
+        </>
+    )
+}
+
+
+
 
 export default Affiliation;

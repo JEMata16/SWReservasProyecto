@@ -64,7 +64,7 @@ export const hotelRouter = createTRPCRouter({
           name,
           description,
           locationsId,
-          rooms: '{"rooms": ' +  JSON.stringify(rooms) + "}",
+          rooms: JSON.stringify({"rooms":rooms}),
           images,
         },
       });

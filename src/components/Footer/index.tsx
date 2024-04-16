@@ -3,6 +3,8 @@ import { Box, Container, Link, Typography, styled } from '@mui/material';
 const FooterWrapper = styled(Container)(
   ({ theme }) => `
         margin-top: ${theme.spacing(4)};
+        padding: ${theme.spacing(4)} 0;
+        width: 100%;
 `
 );
 
@@ -15,6 +17,8 @@ function Footer() {
         alignItems="left"
         textAlign={{ xs: 'center', md: 'left' }}
         justifyContent="space-between"
+        position={'absolute'}
+        bottom={0}
       >
         <Box>
           <Typography variant="subtitle1">

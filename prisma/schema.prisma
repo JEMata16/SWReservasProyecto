@@ -48,10 +48,11 @@ model Tours {
 }
 
 model Locations {
-  id    Int     @id @default(autoincrement())
-  name  String
-  Hotel Hotel[]
-  Tours Tours[]
+  id              Int               @id @default(autoincrement())
+  name            String
+  Hotel           Hotel[]
+  Tours           Tours[]
+  AffiliateHotels AffiliateHotels[]
 }
 
 model Reservation {
@@ -74,6 +75,45 @@ model HotelRating {
   rating    Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model UserAffiliation {
+  userId          String            @id
+  affiliated      Boolean
+  affiliation     AffiliationTypes  @default(NONE)
+  Date            DateTime          @default(now())
+  AffiliateHotels AffiliateHotels[]
+}
+
+model AffiliateHotels {
+  id                   String                 @id @default(uuid())
+  name                 String                 @unique
+  rooms                Json
+  description          String                 @db.VarChar(255)
+  location             Locations              @relation(fields: [locationsId], references: [id])
+  locationsId          Int
+  images               Json
+  user                 UserAffiliation?       @relation(fields: [userId], references: [userId])
+  userId               String
+  AffiliateReservation AffiliateReservation[]
+}
+
+model AffiliateReservation {
+  id                String           @id @default(uuid())
+  email             String?
+  phone             String?
+  dateFrom          DateTime         @default(now())
+  AffiliateHotels   AffiliateHotels? @relation(fields: [affiliateHotelsId], references: [id])
+  affiliateHotelsId String?
+  userId            String
+}
+
+enum AffiliationTypes {
+  NONE
+  FREE
+  FAST
+  ACCELERATE
+  PREMIUM
 }
 
 enum Role {

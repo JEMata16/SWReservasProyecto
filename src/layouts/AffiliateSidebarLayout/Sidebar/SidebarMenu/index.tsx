@@ -13,24 +13,10 @@ import {
 import { SidebarContext } from 'src/contexts/SidebarContext';
 
 import HotelIcon from '@mui/icons-material/Hotel';
-import TourIcon from '@mui/icons-material/Tour';
-import MmsTwoToneIcon from '@mui/icons-material/MmsTwoTone';
+import BookOnlineIcon from '@mui/icons-material/BookOnline';
 import TableChartTwoToneIcon from '@mui/icons-material/TableChartTwoTone';
-import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
-import BallotTwoToneIcon from '@mui/icons-material/BallotTwoTone';
-import BeachAccessTwoToneIcon from '@mui/icons-material/BeachAccessTwoTone';
-import EmojiEventsTwoToneIcon from '@mui/icons-material/EmojiEventsTwoTone';
-import FilterVintageTwoToneIcon from '@mui/icons-material/FilterVintageTwoTone';
-import HowToVoteTwoToneIcon from '@mui/icons-material/HowToVoteTwoTone';
-import LocalPharmacyTwoToneIcon from '@mui/icons-material/LocalPharmacyTwoTone';
-import RedeemTwoToneIcon from '@mui/icons-material/RedeemTwoTone';
-import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
-import TrafficTwoToneIcon from '@mui/icons-material/TrafficTwoTone';
-import CheckBoxTwoToneIcon from '@mui/icons-material/CheckBoxTwoTone';
-import ChromeReaderModeTwoToneIcon from '@mui/icons-material/ChromeReaderModeTwoTone';
-import WorkspacePremiumTwoToneIcon from '@mui/icons-material/WorkspacePremiumTwoTone';
-import CameraFrontTwoToneIcon from '@mui/icons-material/CameraFrontTwoTone';
-import DisplaySettingsTwoToneIcon from '@mui/icons-material/DisplaySettingsTwoTone';
+
+import { useRouter } from 'next/router';
 
 const MenuWrapper = styled(Box)(
   ({ theme }) => `
@@ -174,9 +160,10 @@ const SubMenuWrapper = styled(Box)(
 `
 );
 
-function SidebarMenu() {
+function AffiliateSidebarMenu() {
   const { closeSidebar } = useContext(SidebarContext);
-  
+  const router = useRouter()
+  const {affiliation} = router.query;
   return (
     <>
       <MenuWrapper>
@@ -195,21 +182,12 @@ function SidebarMenu() {
                   href='/dashboards/admin/usuarios-interesados'
                   disableRipple
                   onClick={closeSidebar}
-                  startIcon={<HotelIcon />}
+                  startIcon={<BookOnlineIcon />}
                 >
-                Hotel Consultas
+                  Bookings
                 </Button>
               </ListItem>
-              <ListItem component="div">
-                <Button
-                  href='/dashboards/admin/tours-interesados'
-                  disableRipple
-                  onClick={closeSidebar}
-                  startIcon={<TourIcon/>}
-                >
-                Tours Consultas
-                </Button>
-              </ListItem>
+              
             </List>
           </SubMenuWrapper>
         </List>
@@ -235,32 +213,12 @@ function SidebarMenu() {
               </ListItem>
               <ListItem component="div">
                 <Button
-                  href='/dashboards/admin/hoteles'
+                  href={`/dashboards/${affiliation}/hoteles`}
                   disableRipple
                   onClick={closeSidebar}
-                  startIcon={<TableChartTwoToneIcon />}
+                  startIcon={<HotelIcon />}
                 >
-                  Hoteles
-                </Button>
-              </ListItem>
-              <ListItem component="div">
-                <Button
-                href='/dashboards/admin/tours'
-                  disableRipple
-                  onClick={closeSidebar}
-                  startIcon={<TableChartTwoToneIcon />}
-                >
-                  Tours
-                </Button>
-              </ListItem>
-              <ListItem component="div">
-                <Button
-                href='/dashboards/admin/users'
-                  disableRipple
-                  onClick={closeSidebar}
-                  startIcon={<TableChartTwoToneIcon />}
-                >
-                  User administration
+                  Hotels
                 </Button>
               </ListItem>
             </List>
@@ -271,4 +229,4 @@ function SidebarMenu() {
   );
 }
 
-export default SidebarMenu;
+export default AffiliateSidebarMenu;

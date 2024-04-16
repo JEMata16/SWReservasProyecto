@@ -9,12 +9,21 @@ import { PureLightTheme } from '~/styles/schemes/PureLightTheme';
 import PageTitleWrapper from '~/components/PageTitleWrapper';
 import SidebarLayout from '~/layouts/SidebarLayout/';
 import Graphics from './Graphics';
+import { useSession } from '@clerk/nextjs';
+import { checkUserRole } from '~/utils/checkUserRole';
+import { useRouter } from 'next/router';
 
 
 const theme = PureLightTheme
 
 function DashboardAdmin() {
-  
+  const {session} = useSession();
+  const router = useRouter();
+  const userRole = session ? checkUserRole(session) : null;
+  if(!userRole) {
+    router.push('/');
+    return <div>Loading...</div>;
+  }
   return (
     <>
       <SidebarLayout>

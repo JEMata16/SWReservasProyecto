@@ -1,13 +1,14 @@
-import { SignInButton, SignOutButton, SignedIn, UserButton, useAuth, useSession, useUser } from "@clerk/nextjs";
+import { SignInButton, SignOutButton, SignedIn, UserButton, useSession, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useState } from "react";
+import { api } from "~/utils/api";
 import { checkUserRole } from "~/utils/checkUserRole";
 const Hero = () => {
     const [menuOpen, setMenuOpen] = useState(false);
-    const { isSignedIn } = useUser();
+    const { isSignedIn, user } = useUser();
     const {session} = useSession();
     const userRole = session ? checkUserRole(session) : null;
-   
+    const { data: userAffiliation } = api.affiliation.getByUserId.useQuery({ id: user?.id ?? '' });
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
     };
@@ -33,9 +34,11 @@ const Hero = () => {
                         <li className="hover:text-white"><a href="/cars">Rent a car</a></li>
                         {userRole == "org:admin" ? (
                             <li className="hover:text-white"><a href="/dashboards/admin">Admin</a></li>
-                        ) : (<></>)
-                            
-                        }
+                        ) : (<></>)}
+                        {userAffiliation ? (
+                            <li className="hover:text-white"><a href={`/dashboards/${user?.id}`}>Affiliation</a></li>
+                        ) : (<></>)}
+
                         {isSignedIn ? (
                             <>
                                 <UserButton />
