@@ -6,53 +6,35 @@ import Hero from '~/components/Hero';
 import { FormControl, InputBase, InputLabel, MenuItem, NoSsr, alpha, styled } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import SearchIcon from '@mui/icons-material/Search';
+import { Form } from 'react-router-dom';
 
-const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-        backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-    },
-}));
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
+const StyledSearch = styled('div')({
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    width: '100%',
-    '& .MuiInputBase-input': {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-        transition: theme.transitions.create('width'),
-        [theme.breakpoints.up('sm')]: {
-            width: '12ch',
-            '&:focus': {
-                width: '20ch',
-            },
-        },
+    borderBottom: '2px solid #ccc',
+    padding: '6.5px 5px',
+    '&:hover': {
+        borderBottom: '2px solid #555',
     },
-}));
+});
+
+const StyledInput = styled(InputBase)({
+    padding: '5px',
+    flex: 1,
+    border: 'none',
+    outline: 'none',
+    backgroundColor: 'transparent',
+});
+
+const StyledSearchIcon = styled(SearchIcon)({
+    marginRight: '5px',
+});
 
 const AllPlaces = () => {
     const [selectedLocation, setSelectedLocation] = useState(6);
     const { data: hotelsData, isLoading: hotelsLoading } = api.hotels.hotelBasedOnLocations.useQuery({ locationId: selectedLocation });
-    const {data: toursData, isLoading: toursLoading} = api.tours.toursBasedOnLocation.useQuery({locationId: selectedLocation});
+    const { data: toursData, isLoading: toursLoading } = api.tours.toursBasedOnLocation.useQuery({ locationId: selectedLocation });
     const provinces = [
         { id: 1, name: 'San José' },
         { id: 2, name: 'Limón' },
@@ -66,7 +48,7 @@ const AllPlaces = () => {
 
 
     const handleLocationChange = (event: SelectChangeEvent<number>, child: React.ReactNode) => {
-        setSelectedLocation(parseInt(event.target.value.toString())); 
+        setSelectedLocation(parseInt(event.target.value.toString()));
     };
 
     const selectedProvince = provinces.find(province => province.id === selectedLocation)?.name;
@@ -93,15 +75,15 @@ const AllPlaces = () => {
 
                         </Select>
                     </FormControl>
-                    <Search>
-                        <SearchIconWrapper>
-                            <SearchIcon />
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                            placeholder="Search..."
-                            inputProps={{ 'aria-label': 'search' }}
-                        />
-                    </Search>
+                    <FormControl>
+                        <StyledSearch>
+                            <StyledSearchIcon />
+                            <StyledInput
+                                placeholder="Search..."
+                                inputProps={{ 'aria-label': 'search' }}
+                            />
+                        </StyledSearch>
+                    </FormControl>
                 </NoSsr>
             </div>
             <div className="w-4/5 m-auto cursor-default">
@@ -109,47 +91,53 @@ const AllPlaces = () => {
                     <h2 className="text-4xl font-bold">Hotels in {selectedProvince}</h2>
                     <section className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-cols-1 gap-10 my-10 justify-items-center items-center pb-10 border-b">
                         {hotelsData?.map((hotel) => (
-                            <div key={hotel.id} className="drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200">
+                            <div key={hotel.id} className="flex flex-col drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200 h-full">
                                 <img
                                     className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
                                     src={(hotel.images && typeof hotel.images === 'object' && 'img' in hotel.images && Array.isArray(hotel.images.img)) ? hotel.images.img[0] as string : ""}
                                     alt=""
                                 />
-                                <div className="p-4 space-y-4">
+                                <div className="flex flex-col justify-between h-full p-4 space-y-4">
                                     <div className="flex justify-between">
                                         <p className="text-sm text-red-400">{hotel.name}</p>
                                     </div>
-                                    <p className="font-semibold">{hotel.description}</p>
-                                    <button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">
-                                        <Link href={{ pathname: "/hotel-details", query: { hotelId: hotel.id } }}>
-                                            See more
-                                        </Link>
-                                    </button>
+                                    <p className="font-semibold line-clamp-3">
+                                        {hotel.description}
+                                    </p>
+                                    <div className="mt-auto">
+                                        <button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">
+                                            <Link href={{ pathname: "/hotel-details", query: { hotelId: hotel.id } }}>
+                                                See more
+                                            </Link>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         ))}
                     </section>
                     <h2 className="text-4xl font-bold">Tours in {selectedProvince}</h2>
                     <section className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-cols-1 gap-10 my-10 justify-items-center items-center pb-10 border-b">
-                        {toursData?.map((tour) => (
-                            <div key={tour.id} className="drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200">
-                                <img
-                                    className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
-                                    src={(tour.images && typeof tour.images === 'object' && 'img' in tour.images && Array.isArray(tour.images.img)) ? tour.images.img[0] as string : ""}
-                                    alt=""
-                                />
-                                <div className="p-4 space-y-4">
-                                    <div className="flex justify-between">
-                                        <p className="text-sm text-red-400">{tour.name}</p>
-                                    </div>
-                                    <p className="font-semibold">{tour.description}</p>
-                                    <button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">
-                                        <Link href={{ pathname: "/tour-details", query: { tourId: tour.id } }}>
-                                            See more
-                                        </Link>
-                                    </button>
-                                </div>
+                        {toursData?.map((tours) => (
+                            <div key={tours.id} className="flex flex-col drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200" style={{ height: "360px" }}>
+                            <img
+                              className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
+                              src={(tours.images && typeof tours.images === 'object' && 'img' in tours.images && Array.isArray(tours.images.img)) ? tours.images.img[0] as string : ""}
+                              alt=""
+                            />
+                            <div className="flex flex-col justify-between h-full p-4">
+                              <div>
+                                <p className="text-sm text-red-400">{tours.name}</p>
+                                <p className="font-semibold line-clamp-3">{tours?.description}</p>
+                              </div>
+                              <div className="mt-auto">
+                                <button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">
+                                  <Link href={{ pathname: "/tour-details", query: { tourId: tours.id } }}>
+                                    See more
+                                  </Link>
+                                </button>
+                              </div>
                             </div>
+                          </div>
                         ))}
                     </section>
                 </div>

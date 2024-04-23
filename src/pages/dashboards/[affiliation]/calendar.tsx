@@ -31,7 +31,9 @@ const ReactDatePickerComponent = ({
     );
 };
 
-
+// Mover la tabla un poco a la derecha
+// Mover la tabla un poco a la derecha
+// Cambiar tamaño de la letra en about
 const Calendar = () => {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());

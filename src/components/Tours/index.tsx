@@ -1,14 +1,12 @@
 import { Button } from "@mui/material";
 import { Prisma } from "@prisma/client";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 
 
 const Tours = () => {
   const { data, isLoading } = api.tours.getAll.useQuery();
   if (isLoading) return <div className="text-4x1 font-bold">Loading...</div>
-  const router = useRouter();
   return (
     <div className="w-4/5 m-auto cursor-default">
       <div className="my-10 text-center">

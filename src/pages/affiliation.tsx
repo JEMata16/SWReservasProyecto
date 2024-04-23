@@ -140,8 +140,7 @@ const Affiliation = () => {
                         <h1 className="text-4xl font-bold">Check out our affiliate users hotels</h1>
                         <section className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-cols-1 gap-10 my-10 justify-items-center items-center pb-10 border-b">
                             {hotels?.map((hotel) => (
-                                <div className="flex flex-col drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200" style={{ height: "360px" }}>
-
+                                <div key={hotel.id} className="flex flex-col drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200 h-full">
                                     <img
                                         className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
                                         src={(hotel.images && typeof hotel.images === 'object' && 'img' in hotel.images && Array.isArray(hotel.images.img)) ? hotel.images.img[0] as string : ""}
@@ -190,234 +189,252 @@ const Affiliation = () => {
                     </div>
                     {/* FIRST CARD */}
                     <div className="mt-[20px] grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 grid-cols-1 gap-[20px]">
-                        <div key="1" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
-                            <div className="pt-[15px] px-[25px] pb-[25px]">
-                                <div className="flex justify-end">
-                                    <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
-                                        <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
-                                            Starter
+                        <div className='relative'>
+                            <div key="1" className="w-full h-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                                <div className="pt-[15px] px-[25px] pb-[25px]">
+                                    <div className="flex justify-end">
+                                        <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
+                                            <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
+                                                Starter
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
+                                            Trial
                                         </p>
+                                        <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
+                                            Free
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
+                                            30 days
+                                        </p>
+
                                     </div>
                                 </div>
 
-                                <div>
-                                    <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
-                                        Trial
-                                    </p>
-                                    <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
-                                        Free
-                                    </p>
-                                </div>
+                                <div className="pt-[25px] px-[25px] pb-[35px]">
+                                    <div>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            1 active listing
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Contact information
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Availability calendar
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Booking management
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Basic support
+                                        </p>
+                                    </div>
+                                    <div className="absolute bottom-0 w-full pb-4">
+                                        {renderButtonBasedOnPlan(affiliation, 0, userEmail)}
+                                    </div>
 
-                                <div>
-                                    <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
-                                        30 days
-                                    </p>
-
                                 </div>
-                            </div>
-
-                            <div className="pt-[25px] px-[25px] pb-[35px]">
-                                <div>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        1 active listing
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Contact information
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Availability calendar
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Booking management
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Basic support
-                                    </p>
-                                </div>
-                                {renderButtonBasedOnPlan(affiliation, 0, userEmail)}
                             </div>
                         </div>
 
                         {/* SECOND CARD */}
-                        <div key="2" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
-                            <div className="pt-[15px] px-[25px] pb-[25px]">
-                                <div className="flex justify-end">
-                                    <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
-                                        <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
-                                            Basic
+                        <div className='relative'>
+                            <div key="2" className="w-full h-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                                <div className="pt-[15px] px-[25px] pb-[25px]">
+                                    <div className="flex justify-end">
+                                        <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
+                                            <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
+                                                Basic
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
+                                            Fast Start
                                         </p>
+                                        <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
+                                            $10
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
+                                            30 days
+                                        </p>
+
                                     </div>
                                 </div>
 
-                                <div>
-                                    <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
-                                        Fast Start
-                                    </p>
-                                    <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
-                                        $10
-                                    </p>
+                                <div className="pt-[25px] px-[25px] pb-[35px]">
+                                    <div>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            3 active listings
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Contact information
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Availability calendar
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Booking management
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Basic support
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Basic performance statistics
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Option to add additional photos
+                                        </p>
+                                    </div>
+                                    <div className="absolute bottom-0 w-full pb-4">
+                                        {renderButtonBasedOnPlan(affiliation, 1, userEmail)}
+                                    </div>
+
                                 </div>
-
-                                <div>
-                                    <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
-                                        30 days
-                                    </p>
-
-                                </div>
-                            </div>
-
-                            <div className="pt-[25px] px-[25px] pb-[35px]">
-                                <div>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        3 active listings
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Contact information
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Availability calendar
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Booking management
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Basic support
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Basic performance statistics
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Option to add additional photos
-                                    </p>
-                                </div>
-
-                                {renderButtonBasedOnPlan(affiliation, 1, userEmail)}
                             </div>
                         </div>
 
                         {/* THIRD CARD */}
-                        <div key="3" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
-                            <div className="pt-[15px] px-[25px] pb-[25px]">
-                                <div className="flex justify-end">
-                                    <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
-                                        <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
-                                            Mid
+                        <div className="relative">
+                            <div key="3" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                                <div className="pt-[15px] px-[25px] pb-[25px]">
+                                    <div className="flex justify-end">
+                                        <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
+                                            <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
+                                                Mid
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
+                                            Accelerate
                                         </p>
+                                        <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
+                                            $30
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
+                                            30 days
+                                        </p>
+
                                     </div>
                                 </div>
 
-                                <div>
-                                    <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
-                                        Accelerate
-                                    </p>
-                                    <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
-                                        $30
-                                    </p>
+                                <div className="pt-[25px] px-[25px] pb-[100px]">
+                                    <div>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            10 active listings
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Contact information
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Availability calendar
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Booking management
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Priority support
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Detailed performance statistics
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Option to add photos and videos
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Boost your listing in search
+                                        </p>
+                                    </div>
+                                    <div className='absolute bottom-0 pb-4'>
+                                        {renderButtonBasedOnPlan(affiliation, 2, userEmail)}
+                                    </div>
+
                                 </div>
-
-                                <div>
-                                    <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
-                                        30 days
-                                    </p>
-
-                                </div>
-                            </div>
-
-                            <div className="pt-[25px] px-[25px] pb-[35px]">
-                                <div>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        10 active listings
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Contact information
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Availability calendar
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Booking management
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Priority support
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Detailed performance statistics
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Option to add photos and videos
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Boost your listing in search
-                                    </p>
-                                </div>
-
-                                {renderButtonBasedOnPlan(affiliation, 2, userEmail)}
                             </div>
                         </div>
 
                         {/* FOURTH CARD */}
-                        <div key="4" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
-                            <div className="pt-[15px] px-[25px] pb-[25px]">
-                                <div className="flex justify-end">
-                                    <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
-                                        <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
-                                            Pro
+                        <div className="relative">
+                            <div key="4" className="w-full h-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                                <div className="pt-[15px] px-[25px] pb-[25px]">
+                                    <div className="flex justify-end">
+                                        <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
+                                            <p className="text-[#00153B] text-[12px] leading-[28px] font-bold">
+                                                Pro
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
+                                            Premium
                                         </p>
+                                        <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
+                                            $50
+                                        </p>
+                                    </div>
+
+                                    <div>
+                                        <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
+                                            30 days
+                                        </p>
+
+
                                     </div>
                                 </div>
 
-                                <div>
-                                    <p className="text-[#00153B] text-[19px] leading-[24px] font-bold">
-                                        Premium
-                                    </p>
-                                    <p className="text-[#00153B] text-[50px] leading-[63px] font-bold">
-                                        $50
-                                    </p>
-                                </div>
+                                <div className="pt-[25px] px-[25px] pb-[100px]">
+                                    <div>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Unlimited listings
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Contact information
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Availability calendar
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Booking management
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Premium support
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Full performance statistics
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Option to add photos, videos, and virtual tours
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Featured listing in search
+                                        </p>
+                                        <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
+                                            Personalized advice
+                                        </p>
 
-                                <div>
-                                    <p className="text-[#717F87] text-[18px] leading-[28px] font-medium">
-                                        30 days
-                                    </p>
+                                    </div>
+                                    <div className='absolute bottom-0 pb-4'>
+                                        {renderButtonBasedOnPlan(affiliation, 3, userEmail)}
+                                    </div>
 
-
-                                </div>
-                            </div>
-
-                            <div className="pt-[25px] px-[25px] pb-[35px]">
-                                <div>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Unlimited listings
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Contact information
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Availability calendar
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Booking management
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Premium support
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Full performance statistics
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Option to add photos, videos, and virtual tours
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Featured listing in search
-                                    </p>
-                                    <p className="text-[#717F87] text-[14px] leading-[24px] font-medium">
-                                        Personalized advice
-                                    </p>
 
                                 </div>
-
-                                {renderButtonBasedOnPlan(affiliation, 3, userEmail)}
                             </div>
                         </div>
 

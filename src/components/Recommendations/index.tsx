@@ -20,8 +20,7 @@ const Places = (): JSX.Element => {
         <h1 className="text-4xl font-bold">Our Recommendation</h1>
         <section className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-cols-1 gap-10 my-10 justify-items-center items-center pb-10 border-b">
           {data?.map((hotel: Hotel) => (
-            <div className="flex flex-col drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200" style={{ height: "360px" }}>
-
+            <div key={hotel.id} className="flex flex-col drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200 h-full">
               <img
                 className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
                 src={(hotel.images && typeof hotel.images === 'object' && 'img' in hotel.images && Array.isArray(hotel.images.img)) ? hotel.images.img[0] as string : ""}

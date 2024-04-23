@@ -19,13 +19,13 @@ const About = () => {
                         <h2 className="font-bold">Eco-Tourism Adventures</h2>
                         <h1 className="text-2xl font-bold">Adventure Tourism Packages</h1>
                     </div>
-                    <p className="text-sm">
+                    <p className="text-lg">
                     Costa Rica's breathtaking natural landscapes and diverse ecosystems make it a 
                     prime destination for eco-tourism adventures. A travel agency specializing in 
                     eco-tourism can arrange guided tours to national parks, rainforests, and conservation areas. 
                     Clients can embark on wildlife spotting expeditions, birdwatching tours, or hike through lush forests, all while minimizing their environmental impact.
                     </p>
-                    <p className="text-sm">
+                    <p className="text-lg">
                     For thrill-seekers, Costa Rica offers a plethora of adrenaline-pumping activities, 
                     and can create tailor-made adventure tourism packages. 
                     From zip-lining through the canopy of the rainforest to white-water rafting down raging rivers, the options are endless. 
@@ -35,7 +35,7 @@ const About = () => {
                 <div className="w-full space-y-4 text-left">
                     <h2 className="font-bold">Customized Itinerary Planning</h2>
                     <h1 className="font-bold text-2xl">Cultural Immersion Experiences</h1>
-                    <p className="text-sm">
+                    <p className="text-lg">
                     Immerse yourself in the rich cultural tapestry of Costa Rica with cultural immersion experiences offered by a Mkconnection associates. 
                     Clients can explore traditional villages, meet local artisans, and engage in authentic cultural activities. 
                     From learning to cook traditional Costa Rican cuisine to participating in indigenous ceremonies, these experiences provide a deeper understanding of the country's vibrant heritage and traditions.
@@ -54,11 +54,11 @@ const About = () => {
                     src="https://pd.w.org/2023/10/513651cbcc5e18561.75234825.jpeg"
                     alt=""
                 />
-                <div className="w-full h-full absolute top-0 flex justify-center items-center">
+                {/* <div className="w-full h-full absolute top-0 flex justify-center items-center">
                     <h1 className="text-4xl text-white font-bold px-5 py-2 border cursor-pointer hover:bg-white hover:text-gray-500 hover:duration-300">
                         View Details
                     </h1>
-                </div>
+                </div> */}
             </div>
 
             <div className="my-20 flex justify-between items-center xl:h-[500px]">
@@ -70,11 +70,11 @@ const About = () => {
                     />
                 </div>
                 <div className="xl:w-[500px] p-5 text-center space-y-5 sm:space-y-2">
-                    <h1 className="md:text-xl sm:text-sm">MkConnection Travels and DMC</h1>
+                    <h1 className="md:text-xl sm:text-lg">MkConnection Travels and DMC</h1>
                     <h2 className="md:text-4xl sm:text-base">
                         Costa Rica
                     </h2>
-                    <p className="md:text-base sm:text-xs">
+                    <p className="md:text-lg sm:text-xs">
                     Costa Rica, a jewel of Central America, beckons with its breathtaking landscapes, 
                     vibrant culture, and eco-conscious ethos. With its diverse ecosystems, from dense rainforests to sun-kissed beaches, 
                     Costa Rica offers an unparalleled playground for nature enthusiasts and adventurers alike. Discover a land where conservation thrives, 
