@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useEffect } from 'react';
 import { Box, ThemeProvider, alpha, lighten, useTheme } from '@mui/material';
 // import { Outlet } from 'react-router-dom';
 
@@ -6,6 +6,8 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import { PureLightTheme } from '~/styles/schemes/PureLightTheme';
 import { SidebarProvider } from '~/contexts/SidebarContext';
+import { useOrganizationList } from '@clerk/nextjs';
+import { useRouter } from 'next/router';
 
 interface SidebarLayoutProps {
   children?: ReactNode;
@@ -13,7 +15,21 @@ interface SidebarLayoutProps {
 
 const SidebarLayout: FC<SidebarLayoutProps> = ({children}) => {
   const theme = PureLightTheme
-
+  const { organizationList, isLoaded } = useOrganizationList();
+  const router = useRouter();
+  useEffect(() => {
+    if (isLoaded) {
+      // Find the admin organization from the loaded organization list
+      const adminOrganization = organizationList.find(
+        (org) => org.membership.role === 'org:admin'
+      );
+  
+      // If the user is not an admin, redirect to the homepage
+      if (!adminOrganization || adminOrganization.membership.role !== 'org:admin') {
+        router.push('/'); // Replace '/' with the homepage URL
+      }
+    }
+  }, [isLoaded, organizationList]);
   return (
     <>
     <ThemeProvider theme={theme} >
