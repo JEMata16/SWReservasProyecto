@@ -7,6 +7,7 @@ import { createClerkClient } from "@clerk/nextjs/server";
 import { useEffect, useState } from "react";
 import { env } from "~/env";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { LoadingSpinner } from "~/components/Loading";
 
 interface UserDetails {
     // Define the type of user details here
@@ -76,7 +77,7 @@ const MyTable: React.FC<{data: Array<ReservationData>;}> = ({ data } : { data: A
                         <TableCell>Hotel</TableCell>
                     </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody >
                     {data.length === 0 ? (
                         <TableRow>
                             <TableCell colSpan={3}>
@@ -121,9 +122,9 @@ function usuariosInteresados(): JSX.Element {
     return (
         <SidebarLayout>
             {tableData ? (
-                <MyTable data={tableData} />
+                <MyTable  data={tableData}/>
             ) : (
-                <div>Loading...</div>
+                <LoadingSpinner/>
             )}
         </SidebarLayout>
     ) as JSX.Element;

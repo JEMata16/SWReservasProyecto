@@ -120,13 +120,13 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
   return (
     <div className="carousel content-center w-full">
       {imagesItems.map((imageUrl: Prisma.JsonValue, index: number) => (
-        <div key={index} className={`carousel-item relative w-full ${index === currentSlide ? 'block' : 'hidden'}`}>
-          <img src={imageUrl as string} className="w-full" alt={`Slide ${index + 1}`} />
-          <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-            <a href={`#slide${index === 0 ? imagesItems.length : index}`} className="btn btn-circle" onClick={prevSlide}>
+        <div key={index} className={`carousel-item w-full ${index === currentSlide ? 'block' : 'hidden'}`}>
+          <img src={imageUrl as string} className="w-full top-0 left-0" alt={`Slide ${index + 1}`} />
+          <div className="flex bottom-0 left-0 right-0 justify-between transform -translate-y-1/2 left-5 right-5 top-2">
+            <a href={`#slide${index === 0 ? imagesItems.length : index}`} className="btn btn-circle mt-[-250px] text-white" onClick={prevSlide}>
               ❮
             </a>
-            <a href={`#slide${index === imagesItems.length - 1 ? 1 : index + 2}`} className="btn btn-circle" onClick={nextSlide}>
+            <a href={`#slide${index === imagesItems.length - 1 ? 1 : index + 2}`} className="btn btn-circle mt-[-250px] text-white" onClick={nextSlide}>
               ❯
             </a>
           </div>

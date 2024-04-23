@@ -1,15 +1,11 @@
 
 import { ButtonBase, Chip, IconButton, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
-import SidebarLayout from "~/layouts/SidebarLayout";
 import { api } from "~/utils/api";
-import axios from 'axios';
-import { createClerkClient } from "@clerk/nextjs/server";
 import { useEffect, useState } from "react";
-import { env } from "~/env";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { AffiliateReservation, Prisma } from "@prisma/client";
 import { useAuth } from "@clerk/nextjs";
 import AffiliateSidebarLayout from "~/layouts/AffiliateSidebarLayout";
+import { LoadingSpinner } from "~/components/Loading";
 
 interface UserDetails {
     // Define the type of user details here
@@ -127,7 +123,7 @@ function AfiliacionUsuariosInteresados(): JSX.Element {
             {tableData ? (
                 <MyTable data={tableData} />
             ) : (
-                <div>Loading...</div>
+                <LoadingSpinner/>
             )}
         </AffiliateSidebarLayout>
     ) as JSX.Element;

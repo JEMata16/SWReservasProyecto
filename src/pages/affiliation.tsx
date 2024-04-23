@@ -7,6 +7,8 @@ import React from 'react';
 import Link from "next/link";
 import Hero from '~/components/Hero';
 import { api } from '~/utils/api';
+import emailjs from 'emailjs-com';
+import Footer from '~/components/Footer';
 
 interface ModalProps {
     isOpen: boolean;
@@ -47,6 +49,65 @@ const AskForPlan = ({ userEmail }: { userEmail: string | null }) => {
     const closeModal = () => {
         setIsModalOpen(false);
     };
+
+    const sendEmail = () => {
+        const formData: {
+            from_name: string,
+            to_name: string,
+            message: string,
+            reply_to: string
+          } = {
+            from_name: "MkConnection",
+            to_name: "Usuario x",
+            message: "Afiliacion prueba",
+            reply_to: "josellique@gmail.com",
+          }; 
+
+        const MkToUserForm: {
+            from_name: string,
+            to_name: string,
+            message: string,
+            to_email: string
+          } = {
+            from_name: "MkConnection",
+            to_name: userEmail || "Usuario",
+            message: "We have received your email interested in our affiliation program. Thank you! We will reach you soon.",
+            to_email: userEmail || "",
+          }; 
+        // emailjs
+        //   .send(
+        //     'service_r40kq5j', // service ID
+        //     'template_cxs8boo', // template ID
+        //      formData || '', // form ID
+        //     'HfoHqgMxcMwAV16iJ' // public key
+        //   )
+        //   .then(
+        //     () => {
+        //       console.log('SUCCESS!');
+        //     },
+        //     (error) => {
+        //       console.log('FAILED...', error.text);
+        //     }
+        //   );
+
+          emailjs
+          .send(
+            'service_r40kq5j', // service ID
+            'template_02vffy5', // template ID
+            MkToUserForm || '', // form ID
+            'HfoHqgMxcMwAV16iJ' // public key
+          )
+          .then(
+            () => {
+              console.log('SUCCESS!');
+              window.location.reload();
+            },
+            (error) => {
+              console.log('FAILED...', error.text);
+              window.location.reload();
+            }
+          );
+      };
     return (
         <>
             <div className="mt-[25px]">
@@ -59,7 +120,7 @@ const AskForPlan = ({ userEmail }: { userEmail: string | null }) => {
                     </Typography>
                     <Typography variant="h5">{userEmail}</Typography>
                     <div className="mt-[25px]">
-                        <button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">
+                        <button onClick={sendEmail} className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">
                             Know more
                         </button>
                     </div>
@@ -190,7 +251,7 @@ const Affiliation = () => {
                     {/* FIRST CARD */}
                     <div className="mt-[20px] grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 grid-cols-1 gap-[20px]">
                         <div className='relative'>
-                            <div key="1" className="w-full h-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                            <div key="1" className="w-full h-full bg-[#fff] rounded-[10px] shadow-lg border border-[#E1E3E5] divide-y transform hover:scale-105 transition-transform">
                                 <div className="pt-[15px] px-[25px] pb-[25px]">
                                     <div className="flex justify-end">
                                         <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
@@ -245,7 +306,7 @@ const Affiliation = () => {
 
                         {/* SECOND CARD */}
                         <div className='relative'>
-                            <div key="2" className="w-full h-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                            <div key="2" className="w-full h-full bg-[#fff] rounded-[10px] shadow-lg border border-[#E1E3E5] divide-y transform hover:scale-105 transition-transform">
                                 <div className="pt-[15px] px-[25px] pb-[25px]">
                                     <div className="flex justify-end">
                                         <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
@@ -306,7 +367,7 @@ const Affiliation = () => {
 
                         {/* THIRD CARD */}
                         <div className="relative">
-                            <div key="3" className="w-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                            <div key="3" className="w-full bg-[#fff] rounded-[10px] shadow-lg border border-[#E1E3E5] divide-y transform hover:scale-105 transition-transform">
                                 <div className="pt-[15px] px-[25px] pb-[25px]">
                                     <div className="flex justify-end">
                                         <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
@@ -370,7 +431,7 @@ const Affiliation = () => {
 
                         {/* FOURTH CARD */}
                         <div className="relative">
-                            <div key="4" className="w-full h-full bg-[#fff] rounded-[10px] shadow-[0px 1px 2px #E1E3E5] border border-[#E1E3E5] divide-y">
+                            <div key="4" className="w-full h-full bg-[#fff] rounded-[10px] shadow-lg border border-[#E1E3E5] divide-y transform hover:scale-105 transition-transform">
                                 <div className="pt-[15px] px-[25px] pb-[25px]">
                                     <div className="flex justify-end">
                                         <div className="bg-[#F6F6F7] rounded-[20px] flex justify-center align-center px-[12px]">
@@ -441,7 +502,7 @@ const Affiliation = () => {
                     </div>
                 </div >
             </div >
-
+            <Footer/>
         </>
     )
 }

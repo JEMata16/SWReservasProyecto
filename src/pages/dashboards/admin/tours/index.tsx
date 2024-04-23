@@ -1,7 +1,4 @@
-import { Button } from "@mui/material";
-import { Prisma } from "@prisma/client";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { LoadingSpinner } from "~/components/Loading";
 import SidebarLayout from "~/layouts/SidebarLayout";
 import { api } from "~/utils/api";
 
@@ -9,7 +6,7 @@ import { api } from "~/utils/api";
 const toursAdmin = () => {
   const { data, isLoading } = api.tours.getAll.useQuery();
   const mutation = api.tours.deleteById.useMutation();
-  if (isLoading) return <div className="text-4x1 font-bold">Loading...</div>
+  if (isLoading) return <LoadingSpinner/>;
   const deleteTour = async (id: string) => {
     try {
       await mutation.mutateAsync({

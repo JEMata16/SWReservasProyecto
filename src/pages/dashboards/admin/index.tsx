@@ -12,6 +12,8 @@ import Graphics from './Graphics';
 import { useSession } from '@clerk/nextjs';
 import { checkUserRole } from '~/utils/checkUserRole';
 import { useRouter } from 'next/router';
+import { LoadingSpinner } from '~/components/Loading';
+import Footer from '~/components/Footer';
 
 
 const theme = PureLightTheme
@@ -22,7 +24,7 @@ function DashboardAdmin() {
   const userRole = session ? checkUserRole(session) : null;
   if(!userRole) {
     router.push('/');
-    return <div>Loading...</div>;
+    return <LoadingSpinner/>;
   }
   return (
     <>
@@ -50,7 +52,6 @@ function DashboardAdmin() {
 
             </Grid>
           </Container>
-
         </ThemeProvider>
       </SidebarLayout>
     </>

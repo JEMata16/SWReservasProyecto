@@ -15,12 +15,24 @@ import {
     NoSsr,
 } from '@mui/material';
 import TrendingUp from '@mui/icons-material/TrendingUp';
-import Text from 'src/components/Text';
 import type { ApexOptions } from 'apexcharts';
 import { PureLightTheme } from '~/styles/schemes/PureLightTheme';
 import dynamic from 'next/dynamic';
+import { saveAs } from 'file-saver';
+import { api } from '~/utils/api';
 
 const theme = PureLightTheme;
+
+type ReservationData = {
+    id: string;
+    phone: string;
+    dateFrom: Date;
+    hotel: {
+        id: string;
+        name: string;
+    };
+    userId: string;
+};
 
 const AvatarSuccess = styled(Avatar)(
     ({ theme }) => `
@@ -59,6 +71,13 @@ const ListItemAvatarWrapper = styled(ListItemAvatar)(
 
 function Graphics() {
     const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+    const {data: reservations } = api.reservation.getAllReservations.useQuery<ReservationData[]>();
+    const reservationLabels = reservations?.map((reservation) => reservation.hotel.name) ?? ["No reservations"];
+    const hotelNameCount = reservations?.reduce((acc, reservation) => {
+        acc[reservation.hotel.name] = (acc[reservation.hotel.name] || 0) + 1;
+        return acc;
+    }, {} as Record<string,number>) ?? {};
+
     const chartOptions: ApexOptions = {
         chart: {
             background: 'transparent',
@@ -127,8 +146,17 @@ function Graphics() {
         }
     };
 
-    const chartSeries = [1, 1, 2, 0, 0, 0, 0];
-
+    const chartSeries = Object.values(hotelNameCount);
+    const downloadExcel = async () => {
+        if (reservations) {
+            const XLSX = await import('xlsx'); // Dynamic import
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.json_to_sheet(reservations);
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Chart Data');
+            const excelBlob = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            saveAs(new Blob([excelBlob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'chart_data.xlsx');
+        }
+    };
     return (
         <NoSsr>
             <Card>
@@ -145,7 +173,7 @@ function Graphics() {
                             </Typography>
                             <Box>
                                 <Typography variant="h1" gutterBottom>
-                                    4 Por atender
+                                {reservations?.length} por atender
                                 </Typography>
                                 <Box
                                     display="flex"
@@ -163,7 +191,7 @@ function Graphics() {
                                         <TrendingUp fontSize="large" />
                                     </AvatarSuccess>
                                     <Box>
-                                        <Typography variant="h4">+ 4</Typography>
+                                        <Typography variant="h4">+ {reservations?.length}</Typography>
                                         <Typography variant="subtitle2" noWrap>
                                             este mes
                                         </Typography>
@@ -172,7 +200,7 @@ function Graphics() {
                             </Box>
                             <Grid container spacing={3}>
                                 <Grid sm item>
-                                    <Button fullWidth variant="outlined">
+                                    <Button onClick={downloadExcel} fullWidth variant="outlined">
                                         Descargar lista
                                     </Button>
                                 </Grid>
@@ -222,11 +250,11 @@ function Graphics() {
                                             width: '100%'
                                         }}
                                     >
-                                        <ListItem disableGutters>
+                                        {reservationLabels && reservationLabels.map((reservation, index) => (
+                                            <ListItem disableGutters>
                                             <ListItemText
-                                                primary="San José"
+                                                primary={reservation}
                                                 primaryTypographyProps={{ variant: 'h5', noWrap: true }}
-                                                secondary="SJ"
                                                 secondaryTypographyProps={{
                                                     variant: 'subtitle2',
                                                     noWrap: true
@@ -235,46 +263,7 @@ function Graphics() {
                                             <Box>
                                             </Box>
                                         </ListItem>
-                                        <ListItem disableGutters>
-                                            <ListItemText
-                                                primary="Limón"
-                                                primaryTypographyProps={{ variant: 'h5', noWrap: true }}
-                                                secondary="LM"
-                                                secondaryTypographyProps={{
-                                                    variant: 'subtitle2',
-                                                    noWrap: true
-                                                }}
-                                            />
-                                            <Box>
-                                            </Box>
-                                        </ListItem>
-                                        <ListItem disableGutters>
-                                            <ListItemText
-                                                primary="Puntarenas"
-                                                primaryTypographyProps={{ variant: 'h5', noWrap: true }}
-                                                secondary="PT"
-                                                secondaryTypographyProps={{
-                                                    variant: 'subtitle2',
-                                                    noWrap: true
-                                                }}
-                                            />
-                                            <Box>
-                                            </Box>
-                                        </ListItem>
-                                        <ListItem disableGutters>
-                                            <ListItemText
-                                                primary="Heredia"
-                                                primaryTypographyProps={{ variant: 'h5', noWrap: true }}
-                                                secondary="HD"
-                                                secondaryTypographyProps={{
-                                                    variant: 'subtitle2',
-                                                    noWrap: true
-                                                }}
-                                            />
-                                            <Box>
-
-                                            </Box>
-                                        </ListItem>
+                                        ))}
                                     </List>
                                 </Grid>
                             </Grid>

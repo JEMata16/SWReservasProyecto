@@ -21,6 +21,7 @@ import { PureLightTheme } from '~/styles/schemes/PureLightTheme';
 import dynamic from 'next/dynamic';
 import { useAuth } from '@clerk/nextjs';
 import { api } from '~/utils/api';
+import { saveAs } from 'file-saver';
 
 const theme = PureLightTheme;
 
@@ -147,6 +148,17 @@ function Graphics() {
     };
 
     const chartSeries = Object.values(hotelNameCount);
+    const downloadExcel = async () => {
+        if (reservations) {
+            const XLSX = await import('xlsx'); // Dynamic import
+            const workbook = XLSX.utils.book_new();
+            const worksheet = XLSX.utils.json_to_sheet(reservations);
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Chart Data');
+            const excelBlob = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            saveAs(new Blob([excelBlob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'chart_data.xlsx');
+        }
+    };
+    
 
     return (
         <NoSsr>
@@ -191,7 +203,7 @@ function Graphics() {
                             </Box>
                             <Grid container spacing={3}>
                                 <Grid sm item>
-                                    <Button fullWidth variant="outlined">
+                                    <Button onClick={downloadExcel} fullWidth variant="outlined">
                                         Download list
                                     </Button>
                                 </Grid>

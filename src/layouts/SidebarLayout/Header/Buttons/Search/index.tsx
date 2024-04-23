@@ -143,9 +143,7 @@ function HeaderSearch() {
                   {searchValue}
                 </Typography>
               </Typography>
-              <Link href="#" variant="body2" underline="hover">
-                Advanced search
-              </Link>
+              
             </Box>
             <Divider sx={{ my: 1 }} />
             <List disablePadding>
@@ -165,7 +163,7 @@ function HeaderSearch() {
                 <Box flex="1">
                   <Box display="flex" justifyContent="space-between">
                     <Link
-                      href="#"
+                      href="/dashboards/admin/hoteles"
                       underline="hover"
                       sx={{ fontWeight: 'bold' }}
                       variant="body2"
@@ -203,7 +201,7 @@ function HeaderSearch() {
                 <Box flex="1">
                   <Box display="flex" justifyContent="space-between">
                     <Link
-                      href="#"
+                      href="/dashboards/admin/tours"
                       underline="hover"
                       sx={{ fontWeight: 'bold' }}
                       variant="body2"
@@ -219,7 +217,7 @@ function HeaderSearch() {
                         lighten(theme.palette.secondary.main, 0.5)
                     }}
                   >
-                     Esta pagina contiene las herramientas necesarias para la administracion de los hoteles.
+                     Esta pagina contiene las herramientas necesarias para la administracion de los Tours.
                   </Typography>
                 </Box>
                 <ChevronRightTwoToneIcon />
@@ -246,7 +244,7 @@ function HeaderSearch() {
                       sx={{ fontWeight: 'bold' }}
                       variant="body2"
                     >
-                      Notificaciones
+                      Estadísticas
                     </Link>
                   </Box>
                   <Typography
@@ -257,16 +255,14 @@ function HeaderSearch() {
                         lighten(theme.palette.secondary.main, 0.5)
                     }}
                   >
-                    Revisa los detalles de los mensajes de los usuarios.
+                    Revisa las estadísticas de como van las reservaciones.
                   </Typography>
                 </Box>
                 <ChevronRightTwoToneIcon />
               </ListItem>
             </List>
             <Divider sx={{ mt: 1, mb: 2 }} />
-            <Box sx={{ textAlign: 'center' }}>
-              <Button color="primary">Ver todos los resultados</Button>
-            </Box>
+            
           </DialogContent>
         )}
       </DialogWrapper>

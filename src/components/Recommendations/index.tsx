@@ -2,6 +2,7 @@ import { Hotel } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { api } from "~/utils/api";
+import { LoadingSpinner } from "../Loading";
 
 
 
@@ -12,7 +13,7 @@ import { api } from "~/utils/api";
  */
 const Places = (): JSX.Element => {
   const { data, isLoading }: { data?: Hotel[], isLoading: boolean } = api.hotels.getAll.useQuery({ take: 8 });
-  if (isLoading) return <span className="loading loading-spinner loading-md"></span>
+  if (isLoading) return <LoadingSpinner/>;
   const router = useRouter();
   return (
     <div className="w-4/5 m-auto cursor-default">

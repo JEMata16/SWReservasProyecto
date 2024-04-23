@@ -1,6 +1,7 @@
 import Hero from "~/components/Hero";
 import React, { useRef } from 'react';
 import emailjs from 'emailjs-com';
+import Footer from "~/components/Footer";
 
 type ContactForm = {
   from_name: string;
@@ -75,6 +76,7 @@ const ContactForm: React.FC = () => {
           </div>
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

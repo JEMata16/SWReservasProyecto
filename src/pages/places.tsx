@@ -7,6 +7,8 @@ import { FormControl, InputBase, InputLabel, MenuItem, NoSsr, alpha, styled } fr
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import SearchIcon from '@mui/icons-material/Search';
 import { Form } from 'react-router-dom';
+import { Hotel, Tours } from '@prisma/client';
+import Footer from '~/components/Footer';
 
 
 const StyledSearch = styled('div')({
@@ -30,9 +32,10 @@ const StyledInput = styled(InputBase)({
 const StyledSearchIcon = styled(SearchIcon)({
     marginRight: '5px',
 });
-
+type DataItem = Hotel[] | Tours[]
 const AllPlaces = () => {
-    const [selectedLocation, setSelectedLocation] = useState(6);
+    const [selectedLocation, setSelectedLocation] = useState(1);
+    const [searchInput, setSearchInput] = useState('');
     const { data: hotelsData, isLoading: hotelsLoading } = api.hotels.hotelBasedOnLocations.useQuery({ locationId: selectedLocation });
     const { data: toursData, isLoading: toursLoading } = api.tours.toursBasedOnLocation.useQuery({ locationId: selectedLocation });
     const provinces = [
@@ -44,15 +47,25 @@ const AllPlaces = () => {
         { id: 6, name: 'Cartago' },
         { id: 7, name: 'Guanacaste' }
     ];
+    const filterData = (data: DataItem) => {
+        return data.filter((item) => {
+          // Add your filtering logic here
+          // For example, if you want to filter by name, you can do:
+          return item.name.toLowerCase().includes(searchInput.toLowerCase());
+        });
+      };
 
-
+    const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchInput(event.target.value);
+    };
 
     const handleLocationChange = (event: SelectChangeEvent<number>, child: React.ReactNode) => {
         setSelectedLocation(parseInt(event.target.value.toString()));
     };
 
     const selectedProvince = provinces.find(province => province.id === selectedLocation)?.name;
-
+    const filteredHotelsData = hotelsData ? filterData(hotelsData) : [];
+    const filteredToursData = toursData ? filterData(toursData) : [];
     return (
         <>
             <Hero />
@@ -81,6 +94,7 @@ const AllPlaces = () => {
                             <StyledInput
                                 placeholder="Search..."
                                 inputProps={{ 'aria-label': 'search' }}
+                                onChange={handleSearchInputChange}
                             />
                         </StyledSearch>
                     </FormControl>
@@ -90,7 +104,7 @@ const AllPlaces = () => {
                 <div className="my-10 text-center">
                     <h2 className="text-4xl font-bold">Hotels in {selectedProvince}</h2>
                     <section className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-cols-1 gap-10 my-10 justify-items-center items-center pb-10 border-b">
-                        {hotelsData?.map((hotel) => (
+                        {filteredHotelsData?.map((hotel) => (
                             <div key={hotel.id} className="flex flex-col drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200 h-full">
                                 <img
                                     className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
@@ -117,7 +131,7 @@ const AllPlaces = () => {
                     </section>
                     <h2 className="text-4xl font-bold">Tours in {selectedProvince}</h2>
                     <section className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-cols-1 gap-10 my-10 justify-items-center items-center pb-10 border-b">
-                        {toursData?.map((tours) => (
+                        {filteredToursData?.map((tours) => (
                             <div key={tours.id} className="flex flex-col drop-shadow-2xl text-left rounded space-y-2 bg-white cursor-pointer opacity-80 hover:opacity-100 duration-200" style={{ height: "360px" }}>
                             <img
                               className="w-full h-1/2 max-h-40 object-cover rounded-t-lg"
@@ -142,6 +156,7 @@ const AllPlaces = () => {
                     </section>
                 </div>
             </div>
+            <Footer/>
         </>
     );
 }

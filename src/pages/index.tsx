@@ -3,6 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { NextPage } from "next";
 import Head from "next/head";
+import Footer from "~/components/Footer";
 import Hero from "~/components/Hero";
 import Places from "~/components/Recommendations";
 import Tours from "~/components/Tours";
@@ -22,6 +23,7 @@ const Home: NextPage = () => {
       <main className="bg-white-500">
         <Places/>
         <Tours/>
+        <Footer/>
       </main>
     </>
   );

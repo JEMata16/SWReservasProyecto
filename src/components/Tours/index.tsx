@@ -1,12 +1,11 @@
-import { Button } from "@mui/material";
-import { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { api } from "~/utils/api";
+import { LoadingSpinner } from "../Loading";
 
 
 const Tours = () => {
   const { data, isLoading } = api.tours.getAll.useQuery();
-  if (isLoading) return <div className="text-4x1 font-bold">Loading...</div>
+  if (isLoading) return <LoadingSpinner/>;
   return (
     <div className="w-4/5 m-auto cursor-default">
       <div className="my-10 text-center">

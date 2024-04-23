@@ -3,11 +3,9 @@ import { ButtonBase, Chip, IconButton, Paper, Table, TableBody, TableCell, Table
 import SidebarLayout from "~/layouts/SidebarLayout";
 import { api } from "~/utils/api";
 import axios from 'axios';
-import { createClerkClient } from "@clerk/nextjs/server";
 import { useEffect, useState } from "react";
-import { env } from "~/env";
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Tours } from "@prisma/client";
+import { LoadingSpinner } from "~/components/Loading";
 
 interface UserDetails {
     // Define the type of user details here
@@ -129,7 +127,7 @@ function toursInteresados(): JSX.Element {
 
     return (
         <SidebarLayout>
-            {tableData ? <MyTable data={tableData} /> : <div>Loading...</div>}
+            {tableData ? <MyTable data={tableData} /> : <LoadingSpinner/>}
         </SidebarLayout>
     );
 }
