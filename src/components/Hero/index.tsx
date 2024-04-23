@@ -10,35 +10,37 @@ const Hero = () => {
     const userRole = session ? checkUserRole(session) : null;
     const { data: userAffiliation } = api.affiliation.getByUserId.useQuery({ id: user?.id ?? '' });
     const toggleMenu = () => {
-        setMenuOpen(!menuOpen);
+        setMenuOpen(prevState => !prevState); // Toggle the menuOpen state
     };
     return (
         <>
             <div className="w-full h-screen relative brightness-50">
-                <img
-                    src="images/CostaRica.jpg"
-                    alt=""
-                    className="w-full h-full object-cover "
-                />
+                <img src="images/CostaRica.jpg" alt="" className="w-full h-full object-cover" />
             </div>
             <nav className="w-full absolute top-0 p-5 flex justify-between text-white z-10">
                 <div>
                     <h1 className="text-3xl font-bold cursor-pointer"><a href="/">MkConnection</a></h1>
                 </div>
-                <div className="lg:flex hidden">
+                <div className="lg:hidden">
+                    <div className="block" onClick={toggleMenu}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </div>
+                </div>
+                <div className={`hidden lg:block ${menuOpen ? 'block' : 'hidden'}`}>
                     <ul className="flex space-x-5 font-bold cursor-pointer text-gray-300">
                         <li className="hover:text-white"><a href="/about">About</a></li>
                         <li className="hover:text-white"><a href="/places">Places</a></li>
                         <li className="hover:text-white"><a href="/contact">Contact</a></li>
                         <li className="hover:text-white"><a href="/affiliation">Affiliation program</a></li>
                         <li className="hover:text-white"><a href="/cars">Rent a car</a></li>
-                        {userRole == "org:admin" ? (
+                        {userRole === "org:admin" && (
                             <li className="hover:text-white"><a href="/dashboards/admin">Admin</a></li>
-                        ) : (<></>)}
-                        {userAffiliation ? (
+                        )}
+                        {userAffiliation && (
                             <li className="hover:text-white"><a href={`/dashboards/${user?.id}`}>Affiliation</a></li>
-                        ) : (<></>)}
-
+                        )}
                         {isSignedIn ? (
                             <>
                                 <UserButton />
