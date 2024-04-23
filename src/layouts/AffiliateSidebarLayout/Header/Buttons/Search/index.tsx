@@ -143,9 +143,6 @@ function HeaderSearch() {
                   {searchValue}
                 </Typography>
               </Typography>
-              <Link href="#" variant="body2" underline="hover">
-                Advanced search
-              </Link>
             </Box>
             <Divider sx={{ my: 1 }} />
             <List disablePadding>
