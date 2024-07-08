@@ -155,7 +155,7 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tourId }) => {
           <h2 className="text-3xl font-bold mb-4">{tour?.name}</h2>
           <p className="text-gray-600">Province: {tour?.location}</p>
 
-          <h3 className="text-xl font-semibold mt-4">Rooms</h3>
+          <h3 className="text-xl font-semibold mt-4">Schedule</h3>
           <ul className="list-disc pl-4">
               <li  className="mb-2">Starts at:  {tour?.startsAt}</li>
               <li  className="mb-2">Ends at: {tour?.endsAt}</li>

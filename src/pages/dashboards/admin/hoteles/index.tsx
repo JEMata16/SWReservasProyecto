@@ -37,7 +37,7 @@ const hotelesAdmin = () => {
                   <div className="flex justify-between">
                     <p className="text-sm text-red-400">{hotel.name}</p>
                   </div>
-                  <p className="font-semibold">
+                  <p className="font-semibold line-clamp-3">
                     {hotel.description}
                   </p>
                   <button onClick={() => deleteHotel(hotel.id)} className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">

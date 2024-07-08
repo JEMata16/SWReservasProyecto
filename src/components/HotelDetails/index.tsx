@@ -141,6 +141,10 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
 
 
 const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId, userId, onRatingUpdate }) => {
+  const [hotelRatings, setHotelRatings] = useState<hotelReview[]>([]);
+  const [hasRated, setHasRated] = useState(false);
+  const ratingsData = api.hotelRating.getHotelRatings.useQuery({ hotelId });
+
   const { data } = api.hotels.getById.useQuery({ text: hotelId })
   const hotel = {
     id: data?.id,
@@ -168,6 +172,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId, userId, onRatingUp
         ...rating,
       });
       onRatingUpdate(rating.rating);
+      setHasRated(true);
     } catch (error) {
       console.error("Error submitting rating:", error);
     }
@@ -198,13 +203,11 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId, userId, onRatingUp
     firstName: string;
   };
 
-  const [hotelRatings, setHotelRatings] = useState<hotelReview[]>([]);
-  const [hasRated, setHasRated] = useState(false);
-  const ratingsData = api.hotelRating.getHotelRatings.useQuery({ hotelId });
+
 
   useEffect(() => {
     if (!ratingsData || ratingsData.isLoading || !ratingsData.data || ratingsData.data.length === 0) {
-      
+
       return;
     }
     const fetchHotelRatings = async () => {
@@ -213,7 +216,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId, userId, onRatingUp
         const filledRatings = await Promise.all(
           data.map(async (rating) => {
             const userResponse = await axios.get<{ user: UserDetailsType }>(`/api/userById/${rating.userId}`);
-            if(rating.userId === userId) {
+            if (rating.userId === userId) {
               setHasRated(true);
             }
             return {
@@ -237,18 +240,19 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId, userId, onRatingUp
       <div className="w-full space-y-2 border">
         <div className="w-full p-8 bg-gray-100">
           <h2 className="text-3xl font-bold mb-4">{hotel?.name}</h2>
-          <p className="text-gray-600">Province: {hotel?.location}</p>
+          <p className="text-xl text-gray-700 ">Located in the province: {hotel?.location}</p>
+          <p className="text-xl text-gray-700 mt-4">{hotel?.description}</p>
 
 
-          <h3 className="text-xl font-semibold mt-4">Rooms</h3>
+          <h3 className="text-2xl font-semibold mt-4">Rooms</h3>
           <ul className="list-disc pl-4">
 
             {roomsList.map((room: Prisma.JsonValue, index: number) => (
-              <li key={index} className="mb-2">{(room as { type: string })['type']}</li>
+              <li key={index} className="text-xl mb-2">{(room as { type: string })['type']}</li>
             ))}
           </ul>
 
-          <p className="text-gray-700 mt-4">{hotel?.description}</p>
+
           <ReservationButton id={hotelId} />
         </div>
 
@@ -260,104 +264,73 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId, userId, onRatingUp
         </div>
       </div>
 
-      <div className="flex flex-col items-center">
-        <h2 className="text-xl font-semibold py-2">Rate this hotel</h2>
-        <div>
-          <form onSubmit={handleRatingSubmit}>
-            <div>
-              {[...Array(5)].map((_, index) => (
-                <label key={index} className="inline-flex items-center">
-                  <input
-                    key={index}
-                    className="hidden"
-                    name="rating"
-                    value={index + 1}
-                    type='radio'
-                    onChange={(e) => handleRatingChange(e)}
-                  />
-                  <svg
-                    key={index}
-                    xmlns="http://www.w3.org/2000/svg"
-                    className={`h-8 w-8 fill-current ${index < rating.rating ? 'text-yellow-500' : 'text-gray-300'}`}
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
-                  </svg>
-                </label>
-              ))}
-              <div className="grid">
-                <label className="text-lg font-semibold py-2 mb-2 ">Message: </label>
-                <textarea
-                  value={rating.message}
-                  onChange={(e) => setRating(prevState => ({ ...prevState, message: e.target.value }))}
-                  rows={6}
-                  cols={60}
-                  className="border border-gray-300 rounded-lg p-2"
+      <div className="flex flex-col items-center bg-gray-100 p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-semibold mb-4">Rate this hotel</h2>
+        <form onSubmit={handleRatingSubmit} className="w-full max-w-lg">
+          <div className="flex justify-center mb-6">
+            {[...Array(5)].map((_, index) => (
+              <label key={index} className="inline-flex items-center cursor-pointer">
+                <input
+                  className="hidden"
+                  name="rating"
+                  value={index + 1}
+                  type="radio"
+                  onChange={handleRatingChange}
                 />
-              </div>
-            </div>
-            <button type="submit" 
-             className={`bg-${hasRated ? "blue" : "orange"}-500 hover:bg-${hasRated ? "gray" : "orange"}-700 text-white font-bold py-2 px-8 rounded mt-2`}
-             disabled={hasRated}
-            >
-              {hasRated ? "Rating submitted" : "Submit Rating"}
-            </button>
-          </form>
-        </div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`h-10 w-10 fill-current ${index < rating.rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
+                </svg>
+              </label>
+            ))}
+          </div>
+          <div className="mb-4">
+            <label className="text-lg font-semibold mb-2 block">Message:</label>
+            <textarea
+              value={rating.message}
+              onChange={(e) => setRating(prevState => ({ ...prevState, message: e.target.value }))}
+              rows={6}
+              className="w-full border border-gray-300 rounded-lg p-3"
+            />
+          </div>
+          <button
+            type="submit"
+            className={`w-full bg-${hasRated ? 'blue' : 'orange'}-500 hover:bg-${hasRated ? 'blue' : 'orange'}-700 text-white font-bold py-2 px-4 rounded transition duration-200`}
+            disabled={hasRated}
+          >
+            {hasRated ? 'Rating submitted' : 'Submit Rating'}
+          </button>
+        </form>
       </div>
+
 
       <div className="w-full space-y-2 mt-4 border">
         {hotelRatings && hotelRatings.length > 0 ? (
-          <div className="w-full p-8 bg-gray-100">
-            <h2>{hotel.name}'s Reviews:</h2>
-            <ul className="flex py-5 flex-col space-x-2">
+          <div className="w-full p-10 bg-gray-100 rounded-lg shadow-md">
+            <h2 className="text-2xl font-semibold mb-6">{hotel.name}'s Reviews:</h2>
+            <ul className="space-y-6">
               {hotelRatings.map((review: any, index: number) => (
-                <li key={review.id} className={index !== hotelRatings.length - 1 ? 'border-b-2 border-gray-200 pb-2' : 'pb-2'}>
-                  <div className="flex items-center">
-                    <img src={review.imageUrl} alt={review.firstName} className="h-8 w-8 rounded-full mr-2" />
-                    <h3>{review.firstName}</h3>
+                <li key={review.id} className={index !== hotelRatings.length - 1 ? 'border-b border-gray-300 pb-6' : 'pb-6'}>
+                  <div className="flex items-center mb-4">
+                    <img src={review.imageUrl} alt={review.firstName} className="h-10 w-10 rounded-full mr-4" />
+                    <h3 className="text-lg font-medium mr-4">{review.firstName}</h3>
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <svg
+                          key={i}
+                          xmlns="http://www.w3.org/2000/svg"
+                          className={`h-6 w-6 fill-current ${review.rating > i ? 'text-yellow-500' : 'text-gray-300'}`}
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
+                        </svg>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex inline-flex">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-8 w-8 fill-current ${review.rating >= 1 ? 'text-yellow-500' : 'text-gray-300'}`}
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-8 w-8 fill-current ${review.rating >= 2 ? 'text-yellow-500' : 'text-gray-300'}`}
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-8 w-8 fill-current ${review.rating >= 3 ? 'text-yellow-500' : 'text-gray-300'}`}
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-8 w-8 fill-current ${review.rating >= 4 ? 'text-yellow-500' : 'text-gray-300'}`}
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
-                    </svg>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`h-8 w-8 fill-current ${review.rating >= 5 ? 'text-yellow-500' : 'text-gray-300'}`}
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
-                    </svg>
-                  </div>
-                  <div className="flex items-center">
-                    <p>{review.message}</p>
-                  </div>
-
+                  <p className="text-base">{review.message}</p>
                 </li>
               ))}
             </ul>
