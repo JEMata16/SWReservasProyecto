@@ -71,12 +71,15 @@ const ListItemAvatarWrapper = styled(ListItemAvatar)(
 
 function Graphics() {
     const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
-    const {data: reservations } = api.reservation.getAllReservations.useQuery<ReservationData[]>();
-    const reservationLabels = reservations?.map((reservation) => reservation.hotel.name) ?? ["No reservations"];
+    const { data: reservations } = api.reservation.getAllReservations.useQuery<ReservationData[]>();
+    const reservationLabels = reservations?.map((reservation) => reservation.hotel?.name) ?? ["No reservations"];
     const hotelNameCount = reservations?.reduce((acc, reservation) => {
-        acc[reservation.hotel.name] = (acc[reservation.hotel.name] || 0) + 1;
+        const name = reservation.hotel?.name;
+        if (name) {
+            acc[name] = (acc[name] || 0) + 1;
+        }
         return acc;
-    }, {} as Record<string,number>) ?? {};
+    }, {} as Record<string, number>) ?? {};
 
     const chartOptions: ApexOptions = {
         chart: {
@@ -93,12 +96,12 @@ function Graphics() {
                 }
             }
         },
-        // San José,   Limón,   Puntarenas, Heredia, Alajuela, Cartago, Guanacaste
         colors: ['#ff9900', '#4F804D', '#1c81c2', '#333', '#5c6ac0', '#F779DE', '#f6b26b'],
         dataLabels: {
             enabled: true,
-            formatter: function (val) {
-                return val + '%';
+            formatter: function (val: number) {
+                const roundedVal = Math.round(val * 100) / 100;
+                return roundedVal.toFixed(2) + '%';
             },
             style: {
                 colors: [theme.colors.alpha.trueWhite[100]]
@@ -147,14 +150,58 @@ function Graphics() {
     };
 
     const chartSeries = Object.values(hotelNameCount);
+
     const downloadExcel = async () => {
         if (reservations) {
             const XLSX = await import('xlsx'); // Dynamic import
             const workbook = XLSX.utils.book_new();
-            const worksheet = XLSX.utils.json_to_sheet(reservations);
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Chart Data');
+
+            // Define headers
+            const headers = [
+                "Reservation ID",
+                "Type",
+                "Name",
+                "Date From",
+                "Phone"
+            ];
+
+            // Format reservation data
+            const data = reservations.map((reservation) => ({
+                "Reservation ID": reservation.id,
+                "Type": reservation.hotel ? 'Hotel' : 'Tour',
+                "Name": reservation.hotel?.name,
+                "Date From": reservation.dateFrom,
+                "Phone": reservation.phone
+            }));
+
+            // Convert to worksheet
+            const worksheet = XLSX.utils.json_to_sheet(data, { header: headers });
+
+            // Apply styling (optional)
+            const headerStyle = {
+                font: { bold: true },
+                alignment: { horizontal: 'center', vertical: 'center' },
+                fill: { fgColor: { rgb: 'FF9900' } }
+            };
+
+            // Add headers to worksheet
+            XLSX.utils.sheet_add_aoa(worksheet, [headers], { origin: 'A1' });
+
+            // Apply header styles
+            headers.forEach((header, index) => {
+                const cellAddress = XLSX.utils.encode_cell({ c: index, r: 0 });
+                if (!worksheet[cellAddress]) {
+                    worksheet[cellAddress] = { t: 's', v: header };
+                }
+                worksheet[cellAddress].s = headerStyle;
+            });
+
+            // Append worksheet to workbook
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'Reservation Data');
+
+            // Write workbook and trigger download
             const excelBlob = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-            saveAs(new Blob([excelBlob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'chart_data.xlsx');
+            saveAs(new Blob([excelBlob], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'reservation_data.xlsx');
         }
     };
     return (

@@ -4,8 +4,19 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 
 export const toursRouter = createTRPCRouter({
-    getAll: publicProcedure.query(({ ctx }) => {
-      return ctx.db.tours.findMany();
+    getAll: publicProcedure
+    .input(z.object({ take: z.optional(z.number()) }))
+    .query(({ ctx, input }) => {
+      return ctx.db.tours.findMany({
+        take: input?.take ?? undefined,
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          locationId: true,
+          images: true,
+        },
+      });
     }),
     getFirst: publicProcedure.query(({ ctx }) => {
       return ctx.db.hotel.findFirst();
@@ -23,7 +34,8 @@ export const toursRouter = createTRPCRouter({
     toursBasedOnLocation: publicProcedure
     .input(z.object({locationId: z.number()}))
     .query(({ctx, input})=>{
-      return ctx.db.tours.findMany({where: {locationId: input.locationId}});
+      const filter = input.locationId === 0 ? {} : { locationId: input.locationId };
+      return ctx.db.tours.findMany({ where: filter });
     }),
     deleteById: publicProcedure
     .input(z.object({text: z.string()}))

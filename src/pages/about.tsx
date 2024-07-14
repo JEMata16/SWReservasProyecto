@@ -81,7 +81,8 @@ const About = () => {
                     and every moment is infused with Pura Vida – the pure life.
                     </p>
                     <button className="mt-5 px-5 py-2 border border-black hover:bg-gray-400 hover:duration-300">
-                        Book Now
+                        <a href="/places">Book Now</a>
+                        
                     </button>
                 </div>
                 <div className="xl:w-[500px] w-1/3 lg:block hidden">

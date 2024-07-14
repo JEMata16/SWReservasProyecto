@@ -4,7 +4,7 @@ import { LoadingSpinner } from "../Loading";
 
 
 const Tours = () => {
-  const { data, isLoading } = api.tours.getAll.useQuery();
+  const { data, isLoading } = api.tours.getAll.useQuery({take: 8});
   if (isLoading) return <LoadingSpinner/>;
   return (
     <div className="w-4/5 m-auto cursor-default">

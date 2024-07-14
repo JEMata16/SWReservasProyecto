@@ -43,7 +43,8 @@ export const hotelRouter = createTRPCRouter({
   hotelBasedOnLocations: publicProcedure
   .input(z.object({locationId: z.number()}))
   .query(({ctx, input})=>{
-    return ctx.db.hotel.findMany({where: {locationsId: input.locationId}});
+    const filter = input.locationId === 0 ? {} : { locationsId: input.locationId };
+    return ctx.db.hotel.findMany({ where: filter });
   }),
   addHotel: publicProcedure
     .input(z.object({

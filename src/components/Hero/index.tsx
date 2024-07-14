@@ -1,4 +1,4 @@
-import { SignInButton, SignOutButton, SignedIn, UserButton, useSession, useUser } from "@clerk/nextjs";
+import { SignOutButton,  UserButton, useSession, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { useState } from "react";
 import { api } from "~/utils/api";
@@ -70,7 +70,7 @@ const Hero = () => {
 
                 <div className="space-x-4">
                     <button className="bg-gray-300 py-2 px-5 rounded-md hover:bg-white hover:duration-300">
-                        Book a Trip
+                        <a href="mailto:info@mkconnectioncr.com">Book a Trip</a>
                     </button>
                 </div>
 

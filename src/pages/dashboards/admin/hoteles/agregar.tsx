@@ -138,7 +138,7 @@ const agregarHotel = () => {
 
     return (
         <SidebarLayout>
-            <div className="max-w-md mx-auto">
+            <div className="max-w-md mx-auto pt-6">
                 <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -175,6 +175,7 @@ const agregarHotel = () => {
                             value={hotel.locationsId}
                             label="Location"
                             onChange={handleLocationChange}
+                            className="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         >
                             {provinces.map(province => (
                                 <MenuItem key={province.id} value={province.id}>{province.name}</MenuItem>
