@@ -1,47 +1,24 @@
-import { Box, Container, Link, Typography, styled } from '@mui/material';
-
-const FooterWrapper = styled(Container)(
-  ({ theme }) => `
-        margin-top: ${theme.spacing(4)};
-        padding: ${theme.spacing(4)} 0;
-        width: 100%;
-`
-);
 
 function Footer() {
   return (
-    <FooterWrapper className="footer-wrapper">
-      <Box
-        pb={4}
-        display={{ xs: 'block', md: 'flex' }}
-        alignItems="left"
-        textAlign={{ xs: 'center', md: 'left' }}
-        justifyContent="space-between"
-        position={'absolute'}
-        bottom={0}
-      >
-        <Box>
-          <Typography variant="subtitle1">
-            &copy; 2023 - MkConnectioncr
-          </Typography>
-        </Box>
-        <Typography
-          sx={{
-            pt: { xs: 2, md: 0 }
-          }}
-          variant="subtitle1"
-        >
-          
-          <Link
-            href="https://bloomui.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            
-          </Link>
-        </Typography>
-      </Box>
-    </FooterWrapper>
+    <footer className="bg-gray-800 text-gray-200 py-8 mt-8">
+    <div className="mx-auto px-4">
+      <div className="flex flex-col md:flex-row justify-between items-center">
+        <div className="mb-4 md:mb-0">
+          <p>&copy; 2023 MkConnectioncr. All Rights Reserved.</p>
+        </div>
+        <div className="flex flex-col md:space-x-8 mb-4 md:mb-0 text-center">
+          <p>Tel: +506 1234 5678</p>
+          <p>Email: info@mkconnectioncr.com</p>
+        </div>
+        <div className="flex space-x-4">
+          <a href="/about" className="hover:text-white">About us</a>
+          <a href="/contact" className="hover:text-white">Contact Us!</a>
+          <a href="/affiliation" className="hover:text-white">Affiliate</a>
+        </div>
+      </div>
+    </div>
+  </footer>
   );
 }
 

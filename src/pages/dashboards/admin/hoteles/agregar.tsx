@@ -142,7 +142,7 @@ const agregarHotel = () => {
                 <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">
-                            Name:
+                            Nombre del Hotel:
                         </label>
                         <input
                             type="text"
@@ -155,7 +155,7 @@ const agregarHotel = () => {
                     {/* Add inputs for other fields */}
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">
-                            Description:
+                            Descripción del hotel:
                         </label>
                         <textarea
                             name="description"
@@ -166,7 +166,7 @@ const agregarHotel = () => {
                     </div>
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">
-                            Locations:
+                            Localización:
                         </label>
                         <Select
                             sx={{ minWidth: 120 }}
@@ -186,7 +186,7 @@ const agregarHotel = () => {
                     {/* Add similar inputs for other fields like rooms, images */}
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">
-                            Number of Rooms:
+                            Cantidad de cuartos:
                         </label>
                         <input
                             type="number"
@@ -199,13 +199,13 @@ const agregarHotel = () => {
                     {hotel.rooms.map((room, index) => (
                         <div key={index} className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2">
-                                Room {index + 1}:
+                                Cuarto {index + 1}:
                             </label>
                             <input
                                 type="text"
                                 name="type"
                                 value={room.type}
-                                placeholder="Type"
+                                placeholder="Tipo de Cuarto"
                                 onChange={e => handleRoomChange(index, e)}
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             />
@@ -213,7 +213,7 @@ const agregarHotel = () => {
                                 type="number"
                                 name="capacity"
                                 value={room.capacity}
-                                placeholder="Capacity"
+                                placeholder="Capacidad de personas"
                                 onChange={e => handleRoomChange(index, e)}
                                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mt-2"
                             />
@@ -221,7 +221,7 @@ const agregarHotel = () => {
                     ))}
                     <div className="mb-4">
                         <label className="block text-gray-700 text-sm font-bold mb-2">
-                            Number of Images:
+                            Cantidad de imágenes:
                         </label>
                         <input
                             type="number"
@@ -234,7 +234,7 @@ const agregarHotel = () => {
                     {hotel.images.map((image, index) => (
                         <div key={index} className="mb-4">
                             <label className="block text-gray-700 text-sm font-bold mb-2">
-                                Image {index + 1}:
+                                Imagen {index + 1}:
                             </label>
                             <input
                                 type="text"
@@ -251,7 +251,7 @@ const agregarHotel = () => {
                             type="submit"
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         >
-                            Add Hotel
+                            Agregar Hotel
                         </button>
                     </div>
                 </form>

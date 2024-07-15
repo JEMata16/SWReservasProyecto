@@ -52,7 +52,7 @@ const ContactForm: React.FC = () => {
       <div className="min-h-screen bg-gradient-to-r from-gray-100 to-orange-50 flex flex-col items-center py-12 font-sans">
         <h2 className="text-4xl font-bold text-black mb-8">Let's Chat!</h2>
 
-        <div className="flex flex-col lg:flex-row lg:space-x-12 items-center w-full max-w-6xl px-4 lg:px-0">
+        <div className="flex flex-col lg:space-x-7 items-center w-full px-4 lg:px-0">
           <div className="lg:w-1/2 bg-white p-8 rounded-lg shadow-md transition duration-500 ease-in-out transform hover:scale-105">
             <h3 className="text-2xl font-semibold mb-6 text-gray-800">Get in Touch</h3>
             <form onSubmit={sendEmail} className="space-y-6">
@@ -70,19 +70,6 @@ const ContactForm: React.FC = () => {
               </div>
               <button type="submit" className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-lg transition duration-200">Send Message</button>
             </form>
-          </div>
-
-          <div className="lg:w-1/2 mt-12 lg:mt-0">
-            <div className="h-96 w-full rounded-lg shadow-md overflow-hidden">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m10!1m8!1m3!1d1964.5314985724071!2d-84.21244636087974!3d10.011655284990503!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2sus!4v1712081065701!5m2!1ses-419!2sus"
-                width="100%"
-                height="100%"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="border-none"
-              ></iframe>
-            </div>
           </div>
         </div>
       </div>

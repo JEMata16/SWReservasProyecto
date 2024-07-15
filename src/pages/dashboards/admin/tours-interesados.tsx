@@ -6,13 +6,7 @@ import axios from 'axios';
 import { useEffect, useState } from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { LoadingSpinner } from "~/components/Loading";
-
-interface UserDetails {
-    // Define the type of user details here
-    firstName: string;
-    lastName: string;
-    // Add other properties as needed
-}
+import { EmailAddress } from "@clerk/nextjs/server";
 
 
 type TourReservation = {
@@ -30,6 +24,7 @@ type TourReservation = {
 type UserDetailsType = {
     firstName: string;
     lastName: string;
+    emailAddresses: EmailAddress[];
 };
 
 /**
@@ -79,6 +74,7 @@ const MyTable: React.FC<{data: Array<TourReservation>;}> = ({ data }: { data: Ar
                         <TableCell>Usuario</TableCell>
                         <TableCell>Numero de telefono</TableCell>
                         <TableCell>Tour</TableCell>
+                        <TableCell>Email</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -98,6 +94,9 @@ const MyTable: React.FC<{data: Array<TourReservation>;}> = ({ data }: { data: Ar
                                 </TableCell>
                                 <TableCell>{row.phone}</TableCell>
                                 <TableCell>{row.tour.name}</TableCell>
+                                <TableCell>
+                                    {userDetails ? `${userDetails.emailAddresses[0]?.emailAddress} ` : "N/A"}
+                                </TableCell>
                                 <ButtonBase onClick={() => handleDelete(row.id)}>
                                     <IconButton aria-label="delete">
                                         <DeleteIcon />

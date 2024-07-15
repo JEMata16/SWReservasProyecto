@@ -1,18 +1,18 @@
 
-import { ButtonBase, Chip, IconButton, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import { ButtonBase, IconButton, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import SidebarLayout from "~/layouts/SidebarLayout";
 import { api } from "~/utils/api";
-import axios from 'axios';
-import { createClerkClient } from "@clerk/nextjs/server";
 import { useEffect, useState } from "react";
-import { env } from "~/env";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { LoadingSpinner } from "~/components/Loading";
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { EmailAddress } from "@clerk/nextjs/server";
 
 interface UserDetails {
     // Define the type of user details here
     firstName: string;
     lastName: string;
+    emailAddresses: EmailAddress[];
     // Add other properties as needed
 }
 
@@ -26,6 +26,14 @@ type ReservationData = {
         name: string;
     };
     userId: string;
+};
+
+const formatPhoneNumber = (phoneNumber: string): string => {
+    const phoneNumberObj = parsePhoneNumberFromString(phoneNumber);
+    if (phoneNumberObj) {
+        return phoneNumberObj.formatInternational();
+    }
+    return phoneNumber;
 };
 
 /**
@@ -75,6 +83,7 @@ const MyTable: React.FC<{data: Array<ReservationData>;}> = ({ data } : { data: A
                         <TableCell>Usuario</TableCell>
                         <TableCell>Numero de telefono</TableCell>
                         <TableCell>Hotel</TableCell>
+                        <TableCell>Email</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody >
@@ -92,8 +101,11 @@ const MyTable: React.FC<{data: Array<ReservationData>;}> = ({ data } : { data: A
                                 <TableCell>
                                     {userDetails ? `${userDetails.firstName} ${userDetails.lastName}` : "N/A"}
                                 </TableCell>
-                                <TableCell>{row.phone}</TableCell>
+                                <TableCell>{formatPhoneNumber(row.phone)}</TableCell>
                                 <TableCell>{row.hotel.name}</TableCell>
+                                <TableCell>
+                                    {userDetails ? `${userDetails.emailAddresses[0]?.emailAddress} ` : "N/A"}
+                                </TableCell>
                                 <ButtonBase onClick={() => handleDelete(row.id)}>
                                     <IconButton aria-label="delete">
                                         <DeleteIcon />
