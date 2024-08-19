@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -55,7 +56,7 @@ export const hotelRouter = createTRPCRouter({
       })),
       description: z.string(),
       locationsId: z.number(),
-      images: z.string(),
+      images: z.array(z.string()),
     }))
     .mutation(async ({ input, ctx }) => {
       const { name, rooms, description, locationsId, images } = input;
@@ -65,11 +66,39 @@ export const hotelRouter = createTRPCRouter({
           name,
           description,
           locationsId,
-          rooms: JSON.stringify({"rooms":rooms}),
-          images,
+          rooms: { rooms },
+          images: { img: images },
         },
       });
 
       return newHotel;
+    }),
+    editHotel: publicProcedure
+    .input(z.object({
+      id: z.string(),
+      name: z.string(),
+      rooms: z.array(z.object({
+        type: z.string(),
+        capacity: z.string(),
+      })),
+      description: z.string(),
+      locationsId: z.number(),
+      images: z.array(z.string()),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const { id, name, rooms, description, locationsId, images } = input;
+     
+      const updatedHotel = await ctx.db.hotel.update({
+        where: { id },
+        data: {
+          name,
+          description,
+          locationsId,
+          rooms: { rooms },
+          images: { img: images },
+        },
+      });
+
+      return updatedHotel;
     }),
 });

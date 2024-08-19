@@ -30,12 +30,8 @@ const agregarTour = () => {
         event.preventDefault();
 
         try {
-            const tourDataImg = {
-                img: tour.images
-            };
             await mutation.mutateAsync({
                 ...tour,
-                images: JSON.stringify(tourDataImg),
             });
             setTour(initialTourState);
         } catch (error) {

@@ -8,7 +8,7 @@ function Footer() {
           <p>&copy; 2023 MkConnectioncr. All Rights Reserved.</p>
         </div>
         <div className="flex flex-col md:space-x-8 mb-4 md:mb-0 text-center">
-          <p>Tel: +506 1234 5678</p>
+          <p>Tel: +(506) 2430-7062</p>
           <p>Email: info@mkconnectioncr.com</p>
         </div>
         <div className="flex space-x-4">

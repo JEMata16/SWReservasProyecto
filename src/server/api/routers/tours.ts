@@ -2,9 +2,8 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-
 export const toursRouter = createTRPCRouter({
-    getAll: publicProcedure
+  getAll: publicProcedure
     .input(z.object({ take: z.optional(z.number()) }))
     .query(({ ctx, input }) => {
       return ctx.db.tours.findMany({
@@ -13,47 +12,52 @@ export const toursRouter = createTRPCRouter({
           id: true,
           name: true,
           description: true,
+          startsAt: true,
+          endsAt: true,
           locationId: true,
           images: true,
         },
       });
     }),
-    getFirst: publicProcedure.query(({ ctx }) => {
-      return ctx.db.hotel.findFirst();
-    }),
-    getById: publicProcedure
-    .input(z.object({text: z.string()}))
-    .query(({ input, ctx}) => {
+  getFirst: publicProcedure.query(({ ctx }) => {
+    return ctx.db.hotel.findFirst();
+  }),
+  getById: publicProcedure
+    .input(z.object({ text: z.string() }))
+    .query(({ input, ctx }) => {
       return ctx.db.tours.findUnique({ where: { id: input.text } });
     }),
-    getHotelLocalization: publicProcedure
-    .input(z.object({locationId: z.number()}))
-    .query(({ctx, input})=>{
-      return ctx.db.locations.findUnique({where: {id: input.locationId}});
+  getHotelLocalization: publicProcedure
+    .input(z.object({ locationId: z.number() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.locations.findUnique({ where: { id: input.locationId } });
     }),
-    toursBasedOnLocation: publicProcedure
-    .input(z.object({locationId: z.number()}))
-    .query(({ctx, input})=>{
-      const filter = input.locationId === 0 ? {} : { locationId: input.locationId };
+  toursBasedOnLocation: publicProcedure
+    .input(z.object({ locationId: z.number() }))
+    .query(({ ctx, input }) => {
+      const filter =
+        input.locationId === 0 ? {} : { locationId: input.locationId };
       return ctx.db.tours.findMany({ where: filter });
     }),
-    deleteById: publicProcedure
-    .input(z.object({text: z.string()}))
-    .mutation(({ input, ctx}) => {
+  deleteById: publicProcedure
+    .input(z.object({ text: z.string() }))
+    .mutation(({ input, ctx }) => {
       return ctx.db.tours.delete({ where: { id: input.text } });
     }),
-    addTour: publicProcedure
-    .input(z.object({
-      name: z.string(),
-      description: z.string(),
-      startsAt: z.string(),
-      endsAt: z.string(),
-      locationId: z.number(),
-      images: z.string(),
-    }))
+  addTour: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        description: z.string(),
+        startsAt: z.string(),
+        endsAt: z.string(),
+        locationId: z.number(),
+        images: z.array(z.string()),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       const { name, description, startsAt, endsAt, locationId, images } = input;
-     
+
       const newTour = await ctx.db.tours.create({
         data: {
           name,
@@ -61,11 +65,39 @@ export const toursRouter = createTRPCRouter({
           startsAt,
           endsAt,
           locationId,
-          images,
+          images: {img: images},
         },
       });
 
       return newTour;
     }),
-  });
-  
+  editTour: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        description: z.string(),
+        startsAt: z.string(),
+        endsAt: z.string(),
+        locationId: z.number(),
+        images: z.array(z.string()),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { id, name, description, startsAt, endsAt, locationId, images } = input;
+
+      const updatedTour = await ctx.db.tours.update({
+        where: { id },
+        data: {
+          name,
+          description,
+          startsAt,
+          endsAt,
+          locationId,
+          images: {img: images},
+        },
+      });
+
+      return updatedTour;
+    }),
+});

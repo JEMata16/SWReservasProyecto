@@ -29,12 +29,8 @@ const agregarHotel = () => {
         event.preventDefault();
 
         try {
-            const hotelDataImg = {
-                img: hotel.images
-            };
             await mutation.mutateAsync({
-                ...hotel,
-                images: JSON.stringify(hotelDataImg),
+                ...hotel
             });
             setHotel(initialHotelState);
         } catch (error) {

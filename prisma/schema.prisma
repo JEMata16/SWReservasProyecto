@@ -45,6 +45,7 @@ model Tours {
   locationId  Int
   Reservation Reservation[]
   images      Json
+  TourRating  TourRating[]
 }
 
 model Locations {
@@ -70,6 +71,17 @@ model HotelRating {
   id        String   @id @default(uuid())
   hotel     Hotel?   @relation(fields: [hotelId], references: [id])
   hotelId   String
+  message   String
+  userId    String
+  rating    Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TourRating {
+  id        String   @id @default(uuid())
+  tour      Tours?   @relation(fields: [tourId], references: [id])
+  tourId    String
   message   String
   userId    String
   rating    Int      @default(0)
