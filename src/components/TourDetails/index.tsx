@@ -1,15 +1,17 @@
 import { api } from "~/utils/api";
 import Hero from "../Hero";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
 import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { Typography } from "@mui/material";
 import { Prisma } from "@prisma/client";
+import axios from "axios";
 
 interface TourDetailsProps {
   tourId: string;
+  userId: string | null | undefined;
 }
 interface CarouselProps {
   images: Prisma.JsonObject | undefined;
@@ -23,6 +25,12 @@ interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;
 }
+
+type UserDetailsType = {
+  imageUrl: string;
+  firstName: string;
+};
+
 
 const Modal = ({ isOpen, onClose, children }: ModalProps) => {
   const modalClasses = isOpen ? 'fixed inset-0 flex items-center justify-center' : 'hidden';
@@ -135,8 +143,22 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
     </div>
   );
 };
+type tourReview = {
+  id: string;
+  message: string;
+  rating: number;
+  userId: string;
+  tourId: string;
+  createdAt: Date;
+  imageUrl: string;
+  firstName: string;
+};
 
-const TourDetails: React.FC<TourDetailsProps> = ({ tourId }) => {
+const TourDetails: React.FC<TourDetailsProps> = ({ tourId, userId }) => {
+  const [tourRatings, setTourRatings] = useState<tourReview[]>([]);
+  const [hasRated, setHasRated] = useState(false);
+  const ratingsData = api.tourRating.gettourRatings.useQuery({ tourId });
+
   const { data } = api.tours.getById.useQuery({ text: tourId })
   const tour = {
     id: data?.id,
@@ -147,6 +169,68 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tourId }) => {
     images: data?.images as Prisma.JsonObject,
     location: api.hotels.getHotelLocalization.useQuery({ locationId: (data?.locationId as number) }).data?.name,
   };
+
+  const mutation = api.tourRating.createtourRating.useMutation();
+
+  const initialRatingState = {
+    tourId: tourId,
+    rating: 0,
+    message: "",
+    userId: userId || "",
+  }
+  const [rating, setRating] = useState(initialRatingState);
+  const handleRatingSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    event.preventDefault();
+    try {
+      await mutation.mutateAsync({
+        ...rating,
+      });
+      setHasRated(true);
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+    }
+  };
+  const handleRatingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    const ratingValue = Number(value);
+    setRating(prevState => ({
+      ...prevState,
+      rating: ratingValue,
+    }));
+  };
+
+
+  
+  useEffect(() => {
+    if (!ratingsData || ratingsData.isLoading || !ratingsData.data || ratingsData.data.length === 0) {
+
+      return;
+    }
+    const fetchHotelRatings = async () => {
+      try {
+        const data = ratingsData.data || [];
+        const filledRatings = await Promise.all(
+          data.map(async (rating) => {
+            const userResponse = await axios.get<{ user: UserDetailsType }>(`/api/userById/${rating.userId}`);
+            if (rating.userId === userId) {
+              setHasRated(true);
+            }
+            return {
+              ...rating,
+              imageUrl: userResponse.data.user.imageUrl,
+              firstName: userResponse.data.user.firstName,
+            };
+          })
+        );
+
+        setTourRatings(filledRatings);
+      } catch (error) {
+        console.error("Error fetching hotel ratings:", error);
+      }
+    };
+    fetchHotelRatings();
+  }, [ratingsData, tourId]);
+
   return (
     <>
       <Hero />
@@ -171,6 +255,85 @@ const TourDetails: React.FC<TourDetailsProps> = ({ tourId }) => {
             <Carousel images={tour?.images} />
           </div>
         </div>
+      </div>
+
+      <div className="flex flex-col items-center bg-gray-100 p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-semibold mb-4">Rate this tour</h2>
+        <form onSubmit={handleRatingSubmit} className="w-full max-w-lg">
+          <div className="flex justify-center mb-6">
+            {[...Array(5)].map((_, index) => (
+              <label key={index} className="inline-flex items-center cursor-pointer">
+                <input
+                  className="hidden"
+                  name="rating"
+                  value={index + 1}
+                  type="radio"
+                  onChange={handleRatingChange}
+                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`h-10 w-10 fill-current ${index < rating.rating ? 'text-yellow-500' : 'text-gray-300'}`}
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
+                </svg>
+              </label>
+            ))}
+          </div>
+          <div className="mb-4">
+            <label className="text-lg font-semibold mb-2 block">Message:</label>
+            <textarea
+              value={rating.message}
+              onChange={(e) => setRating(prevState => ({ ...prevState, message: e.target.value }))}
+              rows={6}
+              className="w-full border border-gray-300 rounded-lg p-3"
+            />
+          </div>
+          <button
+            type="submit"
+            className={`w-full bg-${hasRated ? 'blue' : 'orange'}-500 hover:bg-${hasRated ? 'blue' : 'orange'}-700 text-white font-bold py-2 px-4 rounded transition duration-200`}
+            disabled={hasRated}
+          >
+            {hasRated ? 'Rating submitted' : 'Submit Rating'}
+          </button>
+        </form>
+      </div>
+
+
+      <div className="w-full space-y-2 mt-4 border">
+        {tourRatings && tourRatings.length > 0 ? (
+          <div className="w-full p-10 bg-gray-100 rounded-lg shadow-md">
+            <h2 className="text-2xl font-semibold mb-6">{tour.name}'s Reviews:</h2>
+            <ul className="space-y-6">
+              {tourRatings.map((review: any, index: number) => (
+                <li key={review.id} className={index !== tourRatings.length - 1 ? 'border-b border-gray-300 pb-6' : 'pb-6'}>
+                  <div className="flex items-center mb-4">
+                    <img src={review.imageUrl} alt={review.firstName} className="h-10 w-10 rounded-full mr-4" />
+                    <h3 className="text-lg font-medium mr-4">{review.firstName}</h3>
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <svg
+                          key={i}
+                          xmlns="http://www.w3.org/2000/svg"
+                          className={`h-6 w-6 fill-current ${review.rating > i ? 'text-yellow-500' : 'text-gray-300'}`}
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
+                        </svg>
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-base">{review.message}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+        ) : (
+          <div className="w-full p-8 bg-gray-100">
+            <h2>No reviews yet</h2>
+          </div>
+        )}
       </div>
     </>
   );

@@ -221,7 +221,7 @@ function AffiliateSidebarMenu() {
                   Hotels
                 </Button>
               </ListItem>
-              <ListItem component="div">
+              {/* <ListItem component="div">
                 <Button
                   href={`/dashboards/${affiliation}/calendar`}
                   disableRipple
@@ -230,7 +230,7 @@ function AffiliateSidebarMenu() {
                 >
                   Calendar
                 </Button>
-              </ListItem>
+              </ListItem> */}
             </List>
           </SubMenuWrapper>
         </List>

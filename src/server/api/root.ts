@@ -5,6 +5,7 @@ import { reservationRouter } from "./routers/reservation";
 import { toursRouter } from "./routers/tours";
 import { hotelRatingRouter } from "./routers/hotelRating";
 import { affiliationRouter } from "./routers/affiliation";
+import { tourRatingRouter } from "./routers/tourRating";
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   tours: toursRouter,
   hotelRating: hotelRatingRouter,
   affiliation: affiliationRouter,
+  tourRating: tourRatingRouter,
 });
 
 // export type definition of API

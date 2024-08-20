@@ -6,8 +6,8 @@ import Footer from "~/components/Footer";
 
 
 type ContactForm = {
-  from_name: string;
   to_name: string;
+  to_email: string;
   message: string;
 };
 
@@ -18,27 +18,28 @@ const ContactForm: React.FC = () => {
     e.preventDefault();
 
     const formData: ContactForm = {
-      from_name: (formRef.current?.from_name as HTMLInputElement).value,
-      to_name: (formRef.current?.to_name as HTMLInputElement).value,
-      message: (formRef.current?.message as HTMLTextAreaElement).value, // Use HTMLTextAreaElement for textarea
+      to_name: (formRef.current?.to_name ),
+      to_email: (formRef.current?.to_email ),
+      message: (formRef.current?.message ), // Use HTMLTextAreaElement for textarea
     };
 
     const templateParams = {
-      from_name: formData.from_name,
       to_name: formData.to_name,
+      to_email: formData.to_email,
       message: formData.message,
     }
 
     emailjs
       .sendForm(
-        'service_r40kq5j', // service ID
-        'template_cxs8boo', // template ID
-        formRef.current || '', // form ID
-        'HfoHqgMxcMwAV16iJ' // public key
+        'service_fykg52o', // service ID
+        'template_4ng5mnt', // template ID
+        e.currentTarget || '', // form ID
+        '5QduFYRblZ--cqdSv' // public key
       )
       .then(
         () => {
           console.log('SUCCESS!');
+          window.location.reload();
         },
         (error) => {
           console.log('FAILED...', error.text);
@@ -57,12 +58,12 @@ const ContactForm: React.FC = () => {
             <h3 className="text-2xl font-semibold mb-6 text-gray-800">Get in Touch</h3>
             <form onSubmit={sendEmail} className="space-y-6">
               <div>
-                <label htmlFor="from_name" className="block text-lg font-medium text-gray-600 mb-2">Name</label>
-                <input type="text" name="from_name" id="from_name" required className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-500" />
+                <label htmlFor="to_name" className="block text-lg font-medium text-gray-600 mb-2">Name</label>
+                <input type="text" name="to_name" id="to_name" required className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-500" />
               </div>
               <div>
-                <label htmlFor="to_name" className="block text-lg font-medium text-gray-600 mb-2">Email</label>
-                <input type="email" name="to_name" id="to_name" required className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-500" />
+                <label htmlFor="to_email" className="block text-lg font-medium text-gray-600 mb-2">Email</label>
+                <input type="email" name="to_email" id="to_email" required className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-500" />
               </div>
               <div>
                 <label htmlFor="message" className="block text-lg font-medium text-gray-600 mb-2">Message</label>
