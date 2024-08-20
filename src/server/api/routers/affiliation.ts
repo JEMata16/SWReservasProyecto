@@ -88,7 +88,7 @@ export const affiliationRouter = createTRPCRouter({
         ),
         description: z.string(),
         locationsId: z.number(),
-        images: z.string(),
+        images: z.array(z.string()),
         userId: z.string(),
       }),
     )
@@ -100,8 +100,8 @@ export const affiliationRouter = createTRPCRouter({
           name,
           description,
           locationsId,
-          rooms: JSON.stringify({ rooms: rooms }),
-          images,
+          rooms: { rooms: rooms },
+          images: { img: images},
           userId,
         },
       });

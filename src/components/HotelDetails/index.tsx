@@ -3,11 +3,14 @@ import Hero from "../Hero";
 import React, { useEffect, useState } from "react";
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useSession, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
-import { Typography } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import { Prisma } from "@prisma/client";
 import axios from "axios";
+import emailjs from 'emailjs-com';
+import { checkUserRole } from "~/utils/checkUserRole";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface HotelDetailsProps {
   hotelId: string;
@@ -63,9 +66,33 @@ const ReservationButton: React.FC<ReservationProps> = ({ id }) => {
         userid: user.userId as string,
         phoneNumber: phone,
       });
+      emailjs.init('5QduFYRblZ--cqdSv');
+
+      const formData = {
+        to_name: useUser().user?.firstName,
+        to_email: useUser().user?.emailAddresses[0],
+        interest: api.hotels.getById.useQuery({text:id}).data?.name,
+      }
+      emailjs.send(
+        'service_fykg52o', // service ID
+        'template_yvu7dbz', // template ID
+        formData,           // template params
+        '5QduFYRblZ--cqdSv' // public key
+      )
+      .then(
+        () => {
+          alert("Send");
+          window.location.reload();
+        },
+        (error) => {
+          console.log('FAILED...', error.text);
+        }
+      );
+      window.location.reload();
       router.push('/');
     } catch (error) {
       // Handle error or display an error message
+      window.location.reload();
     }
   };
 
@@ -144,8 +171,10 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId, userId, onRatingUp
   const [hotelRatings, setHotelRatings] = useState<hotelReview[]>([]);
   const [hasRated, setHasRated] = useState(false);
   const ratingsData = api.hotelRating.getHotelRatings.useQuery({ hotelId });
-
+  const {session} = useSession();
+  const userRole = session ? checkUserRole(session) : null;
   const { data } = api.hotels.getById.useQuery({ text: hotelId })
+
   const hotel = {
     id: data?.id,
     name: data?.name,
@@ -157,6 +186,15 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId, userId, onRatingUp
 
   const mutation = api.hotelRating.createHotelRating.useMutation();
   const roomsList = hotel.rooms && hotel.rooms['rooms'] ? hotel.rooms['rooms'] as Prisma.JsonArray : [];
+  const deleteMutation = api.hotelRating.deleteHotelRating.useMutation();
+  const deleteRating = async (ratingId: string) => {
+    try{
+      await deleteMutation.mutateAsync({id: ratingId});
+      window.location.reload();
+    }catch{
+      window.location.reload();
+    }
+  }
 
   const initialRatingState = {
     hotelId: hotelId,
@@ -315,6 +353,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId, userId, onRatingUp
               {hotelRatings.map((review: any, index: number) => (
                 <li key={review.id} className={index !== hotelRatings.length - 1 ? 'border-b border-gray-300 pb-6' : 'pb-6'}>
                   <div className="flex items-center mb-4">
+                  
                     <img src={review.imageUrl} alt={review.firstName} className="h-10 w-10 rounded-full mr-4" />
                     <h3 className="text-lg font-medium mr-4">{review.firstName}</h3>
                     <div className="flex">
@@ -328,7 +367,13 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({ hotelId, userId, onRatingUp
                           <path d="M12 2l2.121 4.243 4.879.707-3.536 3.45.832 4.848-4.295-2.262-4.295 2.262.832-4.848-3.536-3.45 4.879-.707z" />
                         </svg>
                       ))}
+                      {userRole === "org:admin" && (
+                        <IconButton onClick={() => deleteRating(review.id)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
                     </div>
+
                   </div>
                   <p className="text-base">{review.message}</p>
                 </li>

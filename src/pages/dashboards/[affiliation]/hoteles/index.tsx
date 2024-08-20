@@ -26,7 +26,7 @@ const AffiliateHotels = () => {
                         <div className="flex justify-center">
                             <h2 className="text-4xl font-bold">Hotels</h2>
                             <button className="bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded ml-5">
-                                <a href="/dashboards/admin/hoteles/agregar"> Add</a>
+                                <a href={`/dashboards/${affiliation}/hoteles/agregar`}> Add</a>
                             </button>
                         </div>
                         <section className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-cols-1 gap-10 my-10 justify-items-center items-center pb-10 border-b">

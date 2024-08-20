@@ -33,12 +33,8 @@ const AddAffiliateHotel = () => {
         event.preventDefault();
 
         try {
-            const hotelDataImg = {
-                img: hotel.images
-            };
             await mutation.mutateAsync({
                 ...hotel,
-                images: JSON.stringify(hotelDataImg),
             });
             setHotel(initialHotelState);
         } catch (error) {
