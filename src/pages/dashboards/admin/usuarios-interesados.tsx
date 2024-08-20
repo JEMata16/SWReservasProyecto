@@ -1,4 +1,3 @@
-
 import { ButtonBase, IconButton, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import SidebarLayout from "~/layouts/SidebarLayout";
 import { api } from "~/utils/api";
@@ -9,13 +8,10 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { EmailAddress } from "@clerk/nextjs/server";
 
 interface UserDetails {
-    // Define the type of user details here
     firstName: string;
     lastName: string;
     emailAddresses: EmailAddress[];
-    // Add other properties as needed
 }
-
 
 type ReservationData = {
     id: string;
@@ -36,24 +32,20 @@ const formatPhoneNumber = (phoneNumber: string): string => {
     return phoneNumber;
 };
 
-/**
- * Renders a table with tour reservations.
- *
- * @param {Array<ReservationData>} data - The data for the table.
- * @return {JSX.Element} The rendered table.
- */
-const MyTable: React.FC<{data: Array<ReservationData>;}> = ({ data } : { data: Array<ReservationData>; }): JSX.Element => {
-    const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
+const MyTable: React.FC<{ data: Array<ReservationData>; }> = ({ data }) => {
+    const [userDetailsMap, setUserDetailsMap] = useState<Record<string, UserDetails>>({});
     const query = api.reservation.deleteReservation.useMutation();
 
     useEffect(() => {
         const fetchUserDetails = async (userId: string) => {
             try {
                 const response = await fetch(`/api/userById/${userId}`);
-
                 if (response.ok) {
                     const data = await response.json();
-                    setUserDetails(data.user);
+                    setUserDetailsMap(prevState => ({
+                        ...prevState,
+                        [userId]: data.user
+                    }));
                 } else {
                     console.error('Failed to fetch user details:', response.status);
                 }
@@ -63,7 +55,9 @@ const MyTable: React.FC<{data: Array<ReservationData>;}> = ({ data } : { data: A
         };
 
         data.forEach((row) => {
-            fetchUserDetails(row.userId);
+            if (!userDetailsMap[row.userId]) {
+                fetchUserDetails(row.userId);
+            }
         });
     }, [data]);
 
@@ -99,12 +93,12 @@ const MyTable: React.FC<{data: Array<ReservationData>;}> = ({ data } : { data: A
                         data.map((row, index) => (
                             <TableRow key={index}>
                                 <TableCell>
-                                    {userDetails ? `${userDetails.firstName} ${userDetails.lastName}` : "N/A"}
+                                    {userDetailsMap[row.userId] ? `${userDetailsMap[row.userId]?.firstName} ${userDetailsMap[row.userId]?.lastName}` : "N/A"}
                                 </TableCell>
                                 <TableCell>{formatPhoneNumber(row.phone)}</TableCell>
                                 <TableCell>{row.hotel.name}</TableCell>
                                 <TableCell>
-                                    {userDetails ? `${userDetails.emailAddresses[0]?.emailAddress} ` : "N/A"}
+                                    {userDetailsMap[row.userId] ? `${userDetailsMap[row.userId]?.emailAddresses[0]?.emailAddress}` : "N/A"}
                                 </TableCell>
                                 <ButtonBase onClick={() => handleDelete(row.id)}>
                                     <IconButton aria-label="delete">
@@ -120,30 +114,21 @@ const MyTable: React.FC<{data: Array<ReservationData>;}> = ({ data } : { data: A
     );
 };
 
-/**
- * Render a component that displays a table of user-interested users, with their phone numbers and hotel names.
- * @returns JSX.Element
- */
 function usuariosInteresados(): JSX.Element {
     const { data: tableData, error } = api.reservation.getAllReservations.useQuery<ReservationData[]>();
     if (error) {
-        // Handle error, show an error message, or redirect
-        return <div>Error loading data</div> as JSX.Element;
+        return <div>Error loading data</div>;
     }
 
     return (
         <SidebarLayout>
             {tableData ? (
-                <MyTable  data={tableData}/>
+                <MyTable data={tableData}/>
             ) : (
                 <LoadingSpinner/>
             )}
         </SidebarLayout>
-    ) as JSX.Element;
+    );
 }
-
-
-
-
 
 export default usuariosInteresados;
